@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Posse</title>
+<meta name="theme-color" content="#4f46e5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234f46e5'/%3E%3Cstop offset='1' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Cpath d='M9 17l5 5 9-12' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fb;--card:#ffffff;--ink:#0d1220;--muted:#647089;--line:#e5e8f0;
+  --accent:#4f46e5;--accent2:#06b6d4;--accent-ink:#ffffff;--soft:#eef0ff;--warn:#b45309;--warn-soft:#fff6e8;--bad:#dc2626;--ok:#059669;
+  --grad:linear-gradient(135deg,#4f46e5,#06b6d4);--shadow:0 1px 2px rgba(13,18,32,.04),0 6px 20px rgba(13,18,32,.05);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0a0d16;--card:#111624;--ink:#e8ebf4;--muted:#8a94ad;--line:#1f2638;
+  --accent:#818cf8;--accent2:#22d3ee;--accent-ink:#0a0d16;--soft:#1b2040;--warn:#f5b453;--warn-soft:#2a2214;--bad:#f87171;--ok:#34d399;
+  --grad:linear-gradient(135deg,#6366f1,#06b6d4);--shadow:none;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.mono,.stat b,.clock,td.num{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 8px;gap:10px}
+.logo{display:flex;align-items:center;gap:10px;min-width:0}
+.brand{font-weight:700;font-size:20px;letter-spacing:-.04em;line-height:1}
+.brand span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:13px}
+#hdr{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw}
+.pill{font-family:"JetBrains Mono",monospace;font-size:12px;padding:5px 10px;border-radius:999px;background:var(--soft);color:var(--accent);white-space:nowrap}
+nav{display:flex;gap:4px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+nav button{border:0;background:none;color:var(--muted);padding:7px 14px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--ink);color:var(--bg)}
+main{padding:20px 0 90px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+h2{font-size:17px;margin:0 0 10px;letter-spacing:-.01em}h3{font-size:15px;margin:0 0 6px}
+.hero{margin:2px 0 16px}.hero h1{font-size:24px;letter-spacing:-.03em;margin:0}.hero p{margin:4px 0 0;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow)}
+.stat b{display:block;font-size:20px}.stat small{color:var(--muted);font-size:12px}
+@media (max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
+.item{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item.done{opacity:.5}.item.done .t{text-decoration:line-through}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--accent);margin-right:6px;text-transform:uppercase;letter-spacing:.04em}
+.tag.rev{background:var(--warn-soft);color:var(--warn)}
+.tag.ia{background:var(--grad);color:#fff}
+.item .body{flex:1;min-width:0}.item .t{font-weight:600}.item .d{color:var(--muted);font-size:13px}
+.temas{font-size:12.5px;color:var(--muted);margin-top:4px}.temas b{color:var(--ink);font-weight:600}
+.btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+button,.btn{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 13px;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block}
+button:hover,.btn:hover{border-color:var(--muted)}
+button.pri{background:var(--grad);color:#fff;border-color:transparent}
+button.ghost{border-color:transparent;background:none;color:var(--muted)}
+button:disabled{opacity:.5;cursor:default}
+.check{width:24px;height:24px;flex:none;border-radius:50%;border:2px solid var(--line);margin-top:2px;cursor:pointer;background:none;padding:0}
+.done .check{background:var(--grad);border-color:transparent}
+.notice{background:var(--warn-soft);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+.info{background:var(--soft);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+.empty{color:var(--muted);text-align:center;padding:20px}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input,select,textarea{font:inherit;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in srgb,var(--accent) 40%,transparent);border-color:var(--accent)}
+textarea{min-height:110px;font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:13px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.days input{padding:6px 2px;text-align:center}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{color:var(--muted);font-weight:500;font-size:12px}
+td input{padding:4px 6px;font-size:13px}
+td.num,th.num{text-align:right}
+.tablewrap{overflow-x:auto}
+.disc-h{display:flex;gap:8px;align-items:center;margin-bottom:6px}.disc-h input{font-weight:600}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--grad)}
+.prog{margin:6px 0 4px}
+.ed{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}
+.ed:first-of-type{border-top:0}
+.ed.on .ed-n{color:var(--accent)}
+.ed-n{font-weight:600}
+.modal{position:fixed;inset:0;background:rgba(5,8,16,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal.on{display:flex}
+.modal .card{width:100%;max-width:460px;margin:0;max-height:90vh;overflow:auto}
+.focus{position:fixed;inset:0;background:var(--bg);z-index:30;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;text-align:center}
+.focus.on{display:flex}
+.clock{font-size:76px;font-weight:700;letter-spacing:-.03em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.small{font-size:12px;color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+.chat{display:flex;flex-direction:column;gap:10px;max-height:420px;overflow:auto;margin-bottom:10px}
+.msg{padding:10px 14px;border-radius:14px;max-width:90%;white-space:pre-wrap;font-size:14px}
+.msg.u{align-self:flex-end;background:var(--soft)}
+.msg.a{align-self:flex-start;border:1px solid var(--line)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s 1s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes s{to{transform:rotate(360deg)}}
+.res{font-size:13px}.res li{margin:3px 0}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top"><div class="logo">
+    <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true" style="flex:none"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#lg)"/><path d="M9 17l5 5 9-12" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div style="min-width:0"><div class="brand">posse<span>.</span></div><div class="sub" id="hdr"></div></div></div>
+    <span class="pill" id="countdown"></span></div>
+  <nav id="nav">
+    <button data-tab="hoje" class="on">Hoje</button>
+    <button data-tab="editais">Editais</button>
+    <button data-tab="ia">IA</button>
+    <button data-tab="desempenho">Desempenho</button>
+    <button data-tab="ajustes">Ajustes</button>
+  </nav>
+</div></header>
+<main class="wrap" id="main"></main>
+
+<div class="modal" id="modal"><div class="card" id="modalBody"></div></div>
+<div class="focus" id="focus">
+  <div class="small" id="focusTag"></div>
+  <h2 id="focusTitle" style="margin:0;font-size:22px"></h2>
+  <div class="clock" id="clock">00:00</div>
+  <div class="btns"><button id="fPause">Pausar</button><button class="pri" id="fDone">Concluir</button><button class="ghost" id="fExit">Sair</button></div>
+  <div class="small">Celular longe. Uma coisa só. No fim, registre o que fez.</div>
+</div>
+
+<script src="editais.js"></script>
+<script>
+/* ============================================================
+   POSSE — do edital à posse
+   App pessoal de estudo para concursos (dados no navegador).
+   ============================================================ */
+const KEY='posse-v2';
+const uid=()=>Math.random().toString(36).slice(2,10);
+function iso(d){const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,10)}
+const hoje=()=>iso(new Date());
+function addDias(s,n){const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)}
+function diasEntre(a,b){return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5)}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtH=m=>m>=60?`${Math.floor(m/60)}h${String(m%60).padStart(2,'0')}`:`${m}min`;
+
+/* ===================== Modelos de edital =====================
+   questoes = nº de questões da disciplina na prova (vira o peso).
+   incid    = nº de questões do assunto em provas anteriores. */
+const PRESETS=window.POSSE_PRESETS||[];
+
+function novoAssunto(nome,incid=0){return{id:uid(),nome,incid:+incid||0,relev:null,temas:[],dominio:1,tecUrl:'',ultimoEstudo:null,questoes:0,acertos:0}}
+function edDePreset(p){
+  return{id:uid(),nome:p.nome,cargo:p.cargo||'',banca:p.banca||'',dataProva:p.dataProva||'',nota:p.nota||'',provas:(p.provas||[]).map(x=>({...x})),
+    disciplinas:p.disciplinas.map(d=>({id:uid(),nome:d.nome,peso:+d.questoes||1,
+      assuntos:d.assuntos.map(a=>typeof a==='string'?novoAssunto(a):Array.isArray(a)?novoAssunto(a[0],a[1]):novoAssunto(a.nome,a.incid))}))};
+}
+
+/* ===================== Estado ===================== */
+function novoEstado(){
+  return{v:2,rotina:{horas:[0,120,120,120,120,120,180],bloco:50,qMeta:15},
+    editais:[],ativo:null,sessoes:[],revisoes:[],missoes:{},ia:{key:'',model:'claude-opus-5-5'},chat:[]};
+}
+let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||S.v!==2)S=novoEstado();
+function salvar(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){alert('Não consegui salvar no navegador. Exporte um backup em Ajustes.')}}
+const E=()=>S.editais.find(e=>e.id===S.ativo)||null;
+const assuntosDe=e=>e?e.disciplinas.flatMap(d=>d.assuntos.map(a=>({...a,disc:d}))):[];
+function acharAssunto(id){for(const e of S.editais)for(const d of e.disciplinas){const a=d.assuntos.find(x=>x.id===id);if(a)return{a,d,e}}return null}
+const mKey=d=>`${S.ativo}|${d}`;
+
+/* ===================== Motor de prioridade ===================== */
+function prioridades(){
+  const e=E();const lista=assuntosDe(e);if(!lista.length)return[];
+  const maxInc=Math.max(0,...lista.map(a=>+a.incid||0));
+  const temRel=lista.some(a=>a.relev!=null);
+  const maxPeso=Math.max(1,...e.disciplinas.map(d=>+d.peso||0));
+  const h=hoje();
+  return lista.map(a=>{
+    // incidência: contagem real de provas (70%) + relevância estimada pela IA (30%)
+    let inc=.5;
+    const cnt=maxInc?(+a.incid||0)/maxInc:null, rel=a.relev!=null?a.relev/100:null;
+    if(cnt!=null&&rel!=null)inc=.7*cnt+.3*rel;else if(cnt!=null)inc=cnt;else if(rel!=null)inc=rel;else if(temRel)inc=.3;
+    const peso=(+a.disc.peso||0)/maxPeso;
+    const lacuna=(6-(+a.dominio||1))/5;
+    const erro=a.questoes>=10?1-a.acertos/a.questoes:.5;
+    const rec=a.ultimoEstudo?Math.min(1,diasEntre(a.ultimoEstudo,h)/14):1;
+    const score=(.4+inc)*(.5+peso)*(.4+lacuna)*(.5+erro)*(.3+rec);
+    return{...a,score,inc,motivo:motivo(inc,lacuna,erro,a)};
+  }).sort((x,y)=>y.score-x.score);
+}
+function motivo(inc,lacuna,erro,a){
+  const m=[];
+  if(inc>=.6)m.push('muito cobrado');
+  if(a.questoes>=10&&erro>=.4)m.push(`você erra ${Math.round(erro*100)}%`);
+  if(!a.ultimoEstudo)m.push('ainda não estudado');else if(lacuna>=.6)m.push('domínio baixo');
+  return m.join(' · ')||'manter em dia';
+}
+
+/* ===================== Missão do dia ===================== */
+function gerarMissao(data,manter=[]){
+  const dow=new Date(data+'T12:00:00').getDay();
+  let budget=(+S.rotina.horas[dow]||0)-manter.reduce((s,i)=>s+i.min,0);
+  const itens=[...manter];const usados=new Set(manter.map(i=>i.assuntoId+i.tipo));
+  const ids=new Set(assuntosDe(E()).map(a=>a.id));
+  let revBudget=Math.max(0,Math.round(budget*.4));
+  for(const r of S.revisoes.filter(r=>!r.feita&&r.due<=data&&ids.has(r.assuntoId)).sort((a,b)=>a.due.localeCompare(b.due))){
+    if(revBudget<15||budget<15)break;
+    if(usados.has(r.assuntoId+'revisao'))continue;
+    itens.push({id:uid(),tipo:'revisao',assuntoId:r.assuntoId,revId:r.id,min:15,qtd:10,feito:false});
+    usados.add(r.assuntoId+'revisao');revBudget-=15;budget-=15;
+  }
+  const bloco=+S.rotina.bloco||50;
+  for(const a of prioridades()){
+    if(budget<Math.min(25,bloco))break;
+    if(usados.has(a.id+'estudo'))continue;
+    const m=Math.min(bloco,budget);
+    itens.push({id:uid(),tipo:'estudo',assuntoId:a.id,min:m,qtd:+S.rotina.qMeta||15,feito:false,motivo:a.motivo});
+    usados.add(a.id+'estudo');budget-=m;
+  }
+  S.missoes[mKey(data)]={data,itens};salvar();return S.missoes[mKey(data)];
+}
+const missaoHoje=()=>S.missoes[mKey(hoje())]||gerarMissao(hoje());
+function replanejar(){gerarMissao(hoje(),missaoHoje().itens.filter(i=>i.feito));render()}
+function refazerHoje(){delete S.missoes[mKey(hoje())];salvar()}
+function pendenciaOntem(){const m=S.missoes[mKey(addDias(hoje(),-1))];return m?m.itens.filter(i=>!i.feito).length:0}
+function streak(){const d0=new Set(S.sessoes.map(s=>s.data));let d=d0.has(hoje())?hoje():addDias(hoje(),-1),n=0;while(d0.has(d)){n++;d=addDias(d,-1)}return n}
+function minutosDesde(n){const lim=addDias(hoje(),-(n-1));return S.sessoes.filter(s=>s.data>=lim).reduce((t,s)=>t+s.min,0)}
+
+/* ===================== Registro ===================== */
+function registrar(item,min,q,ac,dominio){
+  const r=acharAssunto(item.assuntoId);if(!r)return;const a=r.a;
+  S.sessoes.push({id:uid(),data:hoje(),assuntoId:a.id,tipo:item.tipo,min,q,ac});
+  a.questoes+=q;a.acertos+=ac;a.ultimoEstudo=hoje();if(dominio)a.dominio=dominio;
+  if(item.tipo==='estudo'){
+    S.revisoes=S.revisoes.filter(x=>!(x.assuntoId===a.id&&!x.feita));
+    [1,7,30].forEach(n=>S.revisoes.push({id:uid(),assuntoId:a.id,due:addDias(hoje(),n),feita:false}));
+  }else if(item.revId){const rv=S.revisoes.find(x=>x.id===item.revId);if(rv)rv.feita=true}
+  item.feito=true;salvar();render();
+}
+
+/* ===================== TecConcursos (link direcionado) ===================== */
+function tecBotao(a){
+  if(a.tecUrl)return`<a class="btn" href="${esc(a.tecUrl)}" target="_blank" rel="noopener">Questões no Tec ↗</a>`;
+  return`<button data-act="tecCopy" data-id="${a.id}">Copiar assunto e abrir o Tec ↗</button>`;
+}
+function tecCopy(id){
+  const r=acharAssunto(id);if(!r)return;
+  const txt=`${r.d.nome} – ${r.a.nome}${r.e.banca?' – '+r.e.banca:''}`;
+  navigator.clipboard?.writeText(txt).catch(()=>{});
+  window.open('https://www.tecconcursos.com.br/','_blank','noopener');
+  toast('Assunto copiado. Monte o filtro no Tec (assunto + banca) e cole o link do caderno no assunto, na aba Editais. Da próxima vez abre direto.');
+}
+
+/* ===================== IA (Claude API) ===================== */
+const API='https://api.anthropic.com/v1/messages';
+async function claude({system,content,web=false,maxTokens=16000,historico}){
+  if(!S.ia.key)throw new Error('Configure sua chave da API em Ajustes → IA.');
+  const messages=historico?[...historico]:[{role:'user',content}];
+  const body={model:S.ia.model||'claude-opus-5-5',max_tokens:maxTokens,system,messages,
+    output_config:{effort:'medium'},fallbacks:'default'};
+  if(web)body.tools=[{type:'web_search_20260209',name:'web_search',max_uses:10}];
+  for(let i=0;i<6;i++){
+    const r=await fetch(API,{method:'POST',headers:{
+      'content-type':'application/json','x-api-key':S.ia.key,'anthropic-version':'2026-10-21',
+      'anthropic-beta':'server-side-fallback-2026-07-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify(body)});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j?.error?.message||`Erro ${r.status} na API`);
+    if(j.stop_reason==='refusal')throw new Error('A IA recusou este pedido. Tente reformular.');
+    if(j.stop_reason==='pause_turn'){messages.push({role:'assistant',content:j.content});continue}
+    const texto=j.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    const fontes=[];j.content.forEach(b=>{if(b.type==='web_search_tool_result'&&Array.isArray(b.content))b.content.forEach(x=>x.url&&fontes.push({titulo:x.title,url:x.url}))});
+    return{texto,fontes,content:j.content};
+  }
+  throw new Error('A pesquisa demorou demais. Tente de novo.');
+}
+function extrairJSON(t){
+  const m=t.match(/```json\s*([\s\S]*?)```/);const s=m?m[1]:t.slice(t.indexOf('{'),t.lastIndexOf('}')+1);
+  return JSON.parse(s);
+}
+const lerArquivo=f=>new Promise((ok,err)=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.onerror=err;r.readAsDataURL(f)});
+async function blocoArquivo(f){
+  if(f.type==='application/pdf')return{type:'document',source:{type:'base64',media_type:'application/pdf',data:await lerArquivo(f)}};
+  return{type:'text',text:await f.text()};
+}
+function listaAssuntos(e){return e.disciplinas.map(d=>`## ${d.nome}\n`+d.assuntos.map(a=>`- [${a.id}] ${a.nome}`).join('\n')).join('\n')}
+
+let iaBusy=null,iaRes=null;
+async function iaRodar(tipo,fn){
+  iaBusy=tipo;iaRes=null;render();
+  try{iaRes={tipo,...await fn()}}catch(e){iaRes={tipo,erro:e.message}}
+  iaBusy=null;render();
+}
+
+// 1) Ler edital (PDF/texto) e criar um edital novo
+function iaEdital(){
+  const f=document.getElementById('fEdital').files[0],txt=document.getElementById('tEdital').value.trim();
+  if(!f&&!txt)return toast('Envie o PDF do edital ou cole o texto.');
+  iaRodar('edital',async()=>{
+    const content=[];if(f)content.push(await blocoArquivo(f));if(txt)content.push({type:'text',text:txt});
+    content.push({type:'text',text:`Extraia deste edital de concurso a estrutura da prova objetiva para o cargo ${document.getElementById('cEdital').value||'principal'}.
+Responda só com um bloco \`\`\`json no formato:
+{"nome":"órgão/concurso curto","cargo":"","banca":"","dataProva":"AAAA-MM-DD ou vazio","disciplinas":[{"nome":"","questoes":0,"assuntos":["assunto curto (até 8 palavras)"]}]}
+Condense o conteúdo programático em assuntos curtos e estudáveis, sem perder nenhum. Se algo não estiver no edital, deixe vazio.`});
+    const r=await claude({system:'Você é especialista em editais de concursos públicos brasileiros. Seja fiel ao documento.',content});
+    return{dados:extrairJSON(r.texto)};
+  });
+}
+// 2) Raio-X de provas anteriores (PDF) — contagem real por assunto
+function iaProva(){
+  const e=E();const fs=[...document.getElementById('fProva').files];
+  if(!fs.length)return toast('Envie ao menos um PDF de prova anterior.');
+  iaRodar('prova',async()=>{
+    const content=[];for(const f of fs)content.push(await blocoArquivo(f));
+    content.push({type:'text',text:`Estas são provas anteriores. Classifique CADA questão em um dos assuntos abaixo (use o id entre colchetes). Se nenhum servir, use "novo" com disciplina e nome curto.
+${listaAssuntos(e)}
+
+Responda só com \`\`\`json:
+{"provas":[{"descricao":"banca, órgão, cargo, ano","questoes":0}],"contagem":[{"id":"...","n":0}],"novos":[{"disciplina":"","assunto":"","n":0}],"temas":[{"id":"...","temas":["subtema específico que caiu"]}],"resumo":"2-3 frases sobre o perfil da banca nessas provas"}`});
+    const r=await claude({system:'Você é analista de provas de concursos. Conte com precisão; não invente questões.',content,maxTokens:32000});
+    return{dados:extrairJSON(r.texto),arquivos:fs.map(f=>f.name)};
+  });
+}
+// 3) Pesquisa na web: histórico da banca/cargo e temas mais cobrados
+function iaWeb(){
+  const e=E();
+  iaRodar('web',async()=>{
+    const r=await claude({web:true,maxTokens:24000,
+      system:'Você pesquisa o histórico de provas de concursos brasileiros para direcionar o estudo. Use a busca na web. Prefira fontes primárias (bancas, provas, gabaritos) e levantamentos de incidência de cursinhos. Seja honesto sobre incertezas.',
+      content:`Concurso: ${e.nome} — cargo ${e.cargo||'?'} — banca ${e.banca||'?'}.
+Pesquise provas anteriores deste concurso e de concursos parecidos da mesma banca (mesma área), e levantamentos de "assuntos mais cobrados".
+Para CADA assunto abaixo, estime a relevância de 0 a 100 (quanto costuma cair) e até 3 temas específicos mais cobrados.
+${listaAssuntos(e)}
+
+Responda com um resumo curto e depois um bloco \`\`\`json:
+{"resumo":"perfil da banca e do concurso em 3-5 frases","assuntos":[{"id":"...","relev":0,"temas":["..."]}],"confianca":"alta|média|baixa"}`});
+    return{dados:extrairJSON(r.texto),fontes:r.fontes};
+  });
+}
+function aplicarIA(){
+  const e=E(),d=iaRes?.dados;if(!d)return;
+  if(iaRes.tipo==='edital'){
+    const p={nome:d.nome||'Novo edital',cargo:d.cargo,banca:d.banca,dataProva:/^\d{4}-\d{2}-\d{2}$/.test(d.dataProva||'')?d.dataProva:'',
+      nota:'Criado pela IA a partir do edital. Revise.',disciplinas:(d.disciplinas||[]).map(x=>({nome:x.nome,questoes:x.questoes,assuntos:x.assuntos||[]}))};
+    const ne=edDePreset(p);S.editais.push(ne);S.ativo=ne.id;
+  }
+  if(iaRes.tipo==='prova'){
+    (d.contagem||[]).forEach(c=>{const r=acharAssunto(c.id);if(r&&r.e===e)r.a.incid=(+r.a.incid||0)+(+c.n||0)});
+    (d.novos||[]).forEach(n=>{
+      let disc=e.disciplinas.find(x=>x.nome.toLowerCase()===String(n.disciplina).toLowerCase());
+      if(!disc){disc={id:uid(),nome:n.disciplina||'Outros',peso:1,assuntos:[]};e.disciplinas.push(disc)}
+      disc.assuntos.push(novoAssunto(n.assunto,n.n));
+    });
+    (d.temas||[]).forEach(t=>{const r=acharAssunto(t.id);if(r)r.a.temas=[...new Set([...(t.temas||[]),...r.a.temas])].slice(0,5)});
+    e.provas=[...(e.provas||[]),...iaRes.arquivos.map(n=>({nome:n,data:hoje()}))];
+  }
+  if(iaRes.tipo==='web'){
+    (d.assuntos||[]).forEach(x=>{const r=acharAssunto(x.id);if(r){r.a.relev=Math.max(0,Math.min(100,+x.relev||0));if(x.temas?.length)r.a.temas=[...new Set([...r.a.temas,...x.temas])].slice(0,5)}});
+    e.pesquisa={data:hoje(),resumo:d.resumo,confianca:d.confianca,fontes:(iaRes.fontes||[]).slice(0,12)};
+  }
+  const tipo=iaRes.tipo;iaRes=null;refazerHoje();salvar();tab=tipo==='edital'?'editais':'hoje';render();
+  toast('Pronto. Prioridades e missão de hoje atualizadas.');
+}
+// 4) Mentor
+async function mentor(){
+  const inp=document.getElementById('mIn');const q=inp.value.trim();if(!q)return;
+  const e=E();S.chat.push({role:'user',content:q});inp.value='';iaBusy='mentor';render();
+  const ctx=prioridades().slice(0,15).map((a,i)=>`${i+1}. ${a.disc.nome} › ${a.nome} (q:${a.questoes}, acerto:${a.questoes?Math.round(a.acertos/a.questoes*100)+'%':'-'}, domínio ${a.dominio}/5)`).join('\n');
+  try{
+    const r=await claude({maxTokens:8000,historico:S.chat.slice(-12).map(m=>({role:m.role,content:m.content})),
+      system:`Você é o mentor de estudos do app Posse. Fale em português, direto, prático e encorajador, para alguém que tem dificuldade com rotina e disciplina. Respostas curtas, com passos concretos.
+Concurso ativo: ${e?`${e.nome} — ${e.cargo} — ${e.banca} — prova ${e.dataProva||'sem data'}`:'nenhum'}.
+Rotina: ${S.rotina.horas.join('/')} min por dia (dom→sáb). Sequência atual: ${streak()} dias. Últimos 7 dias: ${fmtH(minutosDesde(7))}.
+Fila de prioridade atual:\n${ctx}`});
+    S.chat.push({role:'assistant',content:r.texto});
+  }catch(err){S.chat.push({role:'assistant',content:'⚠ '+err.message})}
+  iaBusy=null;salvar();render();
+}
+
+/* ===================== Render ===================== */
+let tab='hoje';
+const $=s=>document.querySelector(s);
+function render(){
+  const e=E();
+  $('#hdr').textContent=e?[e.nome,e.cargo,e.banca].filter(Boolean).join(' · '):'do edital à posse';
+  const cd=$('#countdown');
+  if(e?.dataProva){const n=diasEntre(hoje(),e.dataProva);cd.textContent=n>=0?`${n} dias`:'prova feita';cd.style.display=''}else cd.style.display='none';
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  $('#main').innerHTML=(!e&&!['editais','ajustes','ia'].includes(tab))?vSemEdital():{hoje:vHoje,editais:vEditais,ia:vIA,desempenho:vDesempenho,ajustes:vAjustes}[tab]();
+  if(tab==='ia'){const c=$('.chat');if(c)c.scrollTop=c.scrollHeight}
+}
+function vSemEdital(){
+  return`<div class="hero"><h1>Bem-vindo ao posse<span style="color:var(--accent2)">.</span></h1><p>Do edital à posse, um dia de cada vez.</p></div>
+  <div class="card"><h2>Comece escolhendo seu concurso</h2><p class="hint" style="margin-top:0">Você pode ter vários editais e alternar entre eles.</p>
+  <div class="btns"><button class="pri" data-tab-go="editais">Adicionar edital</button></div></div>`;
+}
+function saudacao(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
+function vHoje(){
+  const e=E(),m=missaoHoje();
+  const feitos=m.itens.filter(i=>i.feito).length,tot=m.itens.length;
+  const sesH=S.sessoes.filter(s=>s.data===hoje());
+  const minHoje=sesH.reduce((t,s)=>t+s.min,0),qs=sesH.reduce((t,s)=>t+s.q,0);
+  const pend=pendenciaOntem();
+  let h=`<div class="hero"><h1>${saudacao()}.</h1><p>${tot?(feitos===tot?'Missão cumprida. Amanhã tem mais.':`Hoje são ${tot} ${tot>1?'passos':'passo'}. Comece pelo primeiro.`):'Dia livre no plano.'}</p></div>`;
+  if(e.nota&&!assuntosDe(e).some(a=>a.incid||a.relev!=null))h+=`<div class="info">${esc(e.nota)} <a href="#" data-tab-go="ia">Usar a IA →</a></div>`;
+  if(pend)h+=`<div class="notice">Ontem ficaram ${pend} ${pend>1?'itens':'item'} sem fazer. Tudo bem: já reorganizei pela prioridade, sem acumular.</div>`;
+  h+=`<div class="stats">
+    <div class="stat"><small>Sequência</small><b>${streak()}d</b></div>
+    <div class="stat"><small>Hoje</small><b>${fmtH(minHoje)}</b></div>
+    <div class="stat"><small>Questões hoje</small><b>${qs}</b></div>
+    <div class="stat"><small>7 dias</small><b>${fmtH(minutosDesde(7))}</b></div></div>
+  <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+    <h2 style="margin:0">Missão de hoje</h2><span class="sub mono">${feitos}/${tot}</span></div>
+    <div class="bar prog"><i style="width:${tot?feitos/tot*100:0}%"></i></div>`;
+  if(!tot)h+=`<div class="empty">Sem tempo de estudo configurado para hoje. Descanso também é plano.<br><button style="margin-top:8px" data-tab-go="ajustes">Ajustar rotina</button></div>`;
+  for(const it of m.itens){
+    const r=acharAssunto(it.assuntoId);if(!r)continue;const rev=it.tipo==='revisao';
+    h+=`<div class="item ${it.feito?'done':''}">
+      <button class="check" title="Registrar" data-act="log" data-id="${it.id}" ${it.feito?'disabled':''}></button>
+      <div class="body">
+        <div><span class="tag ${rev?'rev':''}">${rev?'Revisão':'Estudo'}</span><span class="small">${esc(r.d.nome)}</span></div>
+        <div class="t">${esc(r.a.nome)}</div>
+        <div class="d">${it.min} min · ${rev?`${it.qtd} questões de revisão`:`teoria + ${it.qtd} questões`}${it.motivo?` · <i>${esc(it.motivo)}</i>`:''}</div>
+        ${r.a.temas?.length?`<div class="temas"><b>Mais cobrado:</b> ${r.a.temas.map(esc).join(' · ')}</div>`:''}
+        ${it.feito?'':`<div class="btns"><button class="pri" data-act="focus" data-id="${it.id}">Começar foco</button>${tecBotao(r.a)}</div>`}
+      </div></div>`;
+  }
+  return h+`<div class="btns" style="margin-top:12px"><button class="ghost" data-act="replan">↻ Replanejar o resto do dia</button></div></div>`;
+}
+
+function vEditais(){
+  const e=E();
+  let h=`<div class="card"><h2>Seus editais</h2>`;
+  if(!S.editais.length)h+=`<p class="hint" style="margin-top:0">Nenhum ainda. Adicione abaixo.</p>`;
+  S.editais.forEach(x=>{
+    const n=x.disciplinas.reduce((t,d)=>t+d.assuntos.length,0);
+    h+=`<div class="ed ${x.id===S.ativo?'on':''}"><div><div class="ed-n">${esc(x.nome)} ${x.cargo?'· '+esc(x.cargo):''}</div>
+      <div class="small">${esc(x.banca||'banca ?')} · ${x.disciplinas.length} disciplinas · ${n} assuntos${x.dataProva?' · prova '+x.dataProva.split('-').reverse().join('/'):''}</div></div>
+      <div class="btns" style="margin:0">${x.id===S.ativo?'<span class="tag">ativo</span>':`<button data-act="ativar" data-e="${x.id}">Estudar este</button>`}
+      <button class="ghost" data-act="delEd" data-e="${x.id}" title="Remover">✕</button></div></div>`;
+  });
+  h+=`<label>Adicionar edital</label><div class="btns" style="margin-top:0">
+    ${PRESETS.map(p=>`<button data-act="addPreset" data-p="${p.id}">+ ${esc(p.nome)} – ${esc(p.cargo)}</button>`).join('')}
+    <button data-act="addVazio">+ Em branco</button><button class="pri" data-tab-go="ia">✦ Ler edital com IA</button></div></div>`;
+  if(!e)return h;
+  h+=`<div class="card"><h2>${esc(e.nome)} — dados</h2><div class="row">
+    <div><label>Concurso / órgão</label><input data-ef="nome" value="${esc(e.nome)}"></div>
+    <div><label>Cargo</label><input data-ef="cargo" value="${esc(e.cargo)}"></div></div>
+    <div class="row"><div><label>Banca</label><input data-ef="banca" value="${esc(e.banca)}"></div>
+    <div><label>Data da prova</label><input type="date" data-ef="dataProva" value="${esc(e.dataProva)}"></div></div>
+    ${e.provas?.length?`<p class="hint">Provas analisadas: ${e.provas.map(p=>esc(p.nome)).join(', ')}</p>`:''}
+    ${e.pesquisa?`<p class="hint">Pesquisa web em ${e.pesquisa.data.split('-').reverse().join('/')} (confiança ${esc(e.pesquisa.confianca||'?')}): ${esc(e.pesquisa.resumo||'')}</p>`:''}
+    <p class="hint"><b>Peso</b> = nº de questões da disciplina na prova. <b>Incid.</b> = questões do assunto em provas anteriores (a IA preenche). <b>Relev.</b> = estimativa da IA pela web (0–100).</p></div>`;
+  for(const d of e.disciplinas){
+    h+=`<div class="card"><div class="disc-h">
+      <input value="${esc(d.nome)}" data-f="dnome" data-d="${d.id}">
+      <span class="small">Peso</span><input type="number" min="0" step="1" style="width:70px" value="${d.peso}" data-f="dpeso" data-d="${d.id}">
+      <button class="ghost" data-act="delDisc" data-d="${d.id}" title="Remover disciplina">✕</button></div>
+      <div class="tablewrap"><table><tr><th>Assunto</th><th class="num">Incid.</th><th class="num">Relev.</th><th class="num">Domínio</th><th>Link do caderno no Tec</th><th></th></tr>`;
+    for(const a of d.assuntos){
+      h+=`<tr><td><input value="${esc(a.nome)}" data-f="anome" data-a="${a.id}">${a.temas?.length?`<div class="small" style="margin-top:2px">${a.temas.map(esc).join(' · ')}</div>`:''}</td>
+        <td style="width:70px"><input type="number" min="0" value="${a.incid}" data-f="aincid" data-a="${a.id}"></td>
+        <td class="num mono" style="width:56px">${a.relev??'–'}</td>
+        <td style="width:70px"><select data-f="adom" data-a="${a.id}">${[1,2,3,4,5].map(n=>`<option ${+a.dominio===n?'selected':''}>${n}</option>`).join('')}</select></td>
+        <td style="min-width:170px"><input placeholder="cole o link do Tec" value="${esc(a.tecUrl)}" data-f="atec" data-a="${a.id}"></td>
+        <td><button class="ghost" data-act="delAss" data-a="${a.id}">✕</button></td></tr>`;
+    }
+    h+=`</table></div><div class="btns"><button data-act="addAss" data-d="${d.id}">+ Assunto</button></div></div>`;
+  }
+  h+=`<div class="btns" style="margin-bottom:14px"><button data-act="addDisc">+ Disciplina</button></div>
+  <div class="card"><h2>Importar em lote (CSV)</h2>
+  <p class="hint" style="margin-top:0">Uma linha por assunto: <code>Disciplina;Assunto;Incidência;Peso</code>. Ex.: números tirados do filtro do Tec por banca/cargo.</p>
+  <textarea id="csv" placeholder="Direito Administrativo;Atos administrativos;42;10"></textarea>
+  <div class="btns"><button class="pri" data-act="importCsv">Importar</button></div></div>`;
+  return h;
+}
+
+function vIA(){
+  const e=E();
+  let h=`<div class="hero"><h1>IA de direcionamento <span class="tag ia">beta</span></h1><p>Lê editais, analisa provas anteriores e pesquisa o que a banca mais cobra.</p></div>`;
+  if(!S.ia.key)h+=`<div class="notice">Para usar a IA, coloque sua chave da API da Anthropic em <a href="#" data-tab-go="ajustes">Ajustes → IA</a>. Ela fica salva só neste navegador.</div>`;
+  const busy=t=>iaBusy===t?`<p class="hint"><span class="spin"></span>Trabalhando… isso pode levar alguns minutos.</p>`:'';
+  h+=resultadoIA();
+  h+=`<div class="card"><h2>1 · Ler um edital novo</h2><p class="hint" style="margin-top:0">Envie o PDF (ou cole o texto). A IA monta disciplinas, pesos e assuntos e cria o edital no app.</p>
+    <label>PDF do edital</label><input type="file" id="fEdital" accept=".pdf,.txt">
+    <label>Cargo (se o edital tiver vários)</label><input id="cEdital" placeholder="ex.: Soldado">
+    <label>…ou cole o conteúdo programático</label><textarea id="tEdital"></textarea>
+    <div class="btns"><button class="pri" data-act="iaEdital" ${iaBusy||!S.ia.key?'disabled':''}>Ler edital</button></div>${busy('edital')}</div>`;
+  if(e){
+    h+=`<div class="card"><h2>2 · Raio-X de provas anteriores</h2><p class="hint" style="margin-top:0">Envie PDFs de provas passadas de <b>${esc(e.nome)}</b> (ou da mesma banca). A IA classifica cada questão nos assuntos do edital e soma a <b>incidência real</b>.</p>
+      <input type="file" id="fProva" accept=".pdf,.txt" multiple>
+      ${e.provas?.length?`<p class="hint">Já analisadas: ${e.provas.map(p=>esc(p.nome)).join(', ')}. Não envie a mesma prova duas vezes.</p>`:''}
+      <div class="btns"><button class="pri" data-act="iaProva" ${iaBusy||!S.ia.key?'disabled':''}>Analisar provas</button></div>${busy('prova')}</div>
+    <div class="card"><h2>3 · Pesquisar histórico na web</h2><p class="hint" style="margin-top:0">A IA pesquisa provas e levantamentos de incidência de <b>${esc(e.banca||'banca')}</b> para <b>${esc(e.cargo||e.nome)}</b> e estima a relevância de cada assunto e os temas mais cobrados, com as fontes.</p>
+      <div class="btns"><button class="pri" data-act="iaWeb" ${iaBusy||!S.ia.key?'disabled':''}>Pesquisar</button></div>${busy('web')}</div>
+    <div class="card"><h2>4 · Mentor</h2><p class="hint" style="margin-top:0">Pergunte qualquer coisa: o que estudar esta semana, como voltar à rotina, como atacar um assunto.</p>
+      <div class="chat">${S.chat.slice(-20).map(m=>`<div class="msg ${m.role==='user'?'u':'a'}">${esc(m.content)}</div>`).join('')}${iaBusy==='mentor'?'<div class="msg a"><span class="spin"></span>pensando…</div>':''}</div>
+      <div style="display:flex;gap:6px"><input id="mIn" placeholder="Ex.: perdi 3 dias, como retomo?" ${!S.ia.key?'disabled':''}><button class="pri" data-act="mentor" ${iaBusy||!S.ia.key?'disabled':''}>Enviar</button></div>
+      ${S.chat.length?'<div class="btns"><button class="ghost" data-act="limparChat">Limpar conversa</button></div>':''}</div>`;
+  }
+  return h;
+}
+function resultadoIA(){
+  if(!iaRes)return'';
+  if(iaRes.erro)return`<div class="notice"><b>Não deu certo:</b> ${esc(iaRes.erro)}</div>`;
+  const d=iaRes.dados;let h=`<div class="card" style="border-color:var(--accent)"><h2>Resultado da IA — revise antes de aplicar</h2><div class="res">`;
+  if(iaRes.tipo==='edital'){
+    h+=`<p><b>${esc(d.nome)}</b> · ${esc(d.cargo)} · ${esc(d.banca)} ${d.dataProva?'· prova '+esc(d.dataProva):''}</p><ul>`+
+      (d.disciplinas||[]).map(x=>`<li><b>${esc(x.nome)}</b> (${+x.questoes||'?'} questões): ${(x.assuntos||[]).length} assuntos</li>`).join('')+'</ul>';
+  }else if(iaRes.tipo==='prova'){
+    const tot=(d.contagem||[]).reduce((t,c)=>t+(+c.n||0),0)+(d.novos||[]).reduce((t,c)=>t+(+c.n||0),0);
+    h+=`<p>${(d.provas||[]).map(p=>esc(p.descricao)+' ('+(+p.questoes||'?')+' q.)').join('<br>')}</p><p>${esc(d.resumo||'')}</p><p><b>${tot}</b> questões classificadas. Mais cobrados:</p><ol>`+
+      (d.contagem||[]).filter(c=>c.n>0).sort((a,b)=>b.n-a.n).slice(0,10).map(c=>{const r=acharAssunto(c.id);return r?`<li>${esc(r.a.nome)} — ${c.n}</li>`:''}).join('')+'</ol>';
+    if(d.novos?.length)h+=`<p class="hint">Assuntos novos que serão criados: ${d.novos.map(n=>esc(n.assunto)).join(', ')}</p>`;
+  }else{
+    h+=`<p>${esc(d.resumo||'')}</p><p class="hint">Confiança: ${esc(d.confianca||'?')}</p><ol>`+
+      (d.assuntos||[]).sort((a,b)=>b.relev-a.relev).slice(0,10).map(x=>{const r=acharAssunto(x.id);return r?`<li>${esc(r.a.nome)} — ${+x.relev}/100${x.temas?.length?` <span class="small">(${x.temas.map(esc).join(', ')})</span>`:''}</li>`:''}).join('')+'</ol>';
+    if(iaRes.fontes?.length)h+=`<p class="hint">Fontes:</p><ul>`+iaRes.fontes.slice(0,10).map(f=>`<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.titulo||f.url)}</a></li>`).join('')+'</ul>';
+  }
+  return h+`</div><div class="btns"><button class="pri" data-act="aplicarIA">Aplicar</button><button class="ghost" data-act="descartarIA">Descartar</button></div></div>`;
+}
+
+function vDesempenho(){
+  const e=E(),p=prioridades(),ids=new Set(p.map(a=>a.id));
+  const ses=S.sessoes.filter(s=>ids.has(s.assuntoId));
+  const porDisc={},lim=addDias(hoje(),-6);
+  ses.filter(s=>s.data>=lim).forEach(s=>{const r=acharAssunto(s.assuntoId);if(r)porDisc[r.d.nome]=(porDisc[r.d.nome]||0)+s.min});
+  const maxD=Math.max(1,...Object.values(porDisc));
+  const totQ=ses.reduce((t,s)=>t+s.q,0),totA=ses.reduce((t,s)=>t+s.ac,0);
+  let h=`<div class="stats">
+    <div class="stat"><small>Horas (${esc(e.nome)})</small><b>${fmtH(ses.reduce((t,s)=>t+s.min,0))}</b></div>
+    <div class="stat"><small>Questões</small><b>${totQ}</b></div>
+    <div class="stat"><small>Acerto</small><b>${totQ?Math.round(totA/totQ*100)+'%':'–'}</b></div>
+    <div class="stat"><small>Revisões vencidas</small><b>${S.revisoes.filter(r=>!r.feita&&r.due<=hoje()&&ids.has(r.assuntoId)).length}</b></div></div>
+  <div class="card"><h2>Tempo por disciplina · 7 dias</h2>`;
+  const ks=Object.keys(porDisc);
+  if(!ks.length)h+=`<div class="empty">Ainda sem registros nesta semana.</div>`;
+  ks.sort((a,b)=>porDisc[b]-porDisc[a]).forEach(k=>h+=`<div style="margin:10px 0"><div style="display:flex;justify-content:space-between"><span>${esc(k)}</span><span class="sub mono">${fmtH(porDisc[k])}</span></div><div class="bar"><i style="width:${porDisc[k]/maxD*100}%"></i></div></div>`);
+  h+=`</div><div class="card"><h2>Fila de prioridade</h2><p class="hint" style="margin-top:0">É nesta ordem que o app manda você estudar.</p><div class="tablewrap"><table>
+  <tr><th>#</th><th>Assunto</th><th class="num">Cobrança</th><th class="num">Questões</th><th class="num">Acerto</th><th>Visto</th><th>Por quê</th></tr>`;
+  p.forEach((a,i)=>h+=`<tr><td class="mono">${i+1}</td><td><b>${esc(a.nome)}</b><div class="small">${esc(a.disc.nome)}</div></td>
+    <td class="num" style="width:90px"><div class="bar"><i style="width:${Math.round(a.inc*100)}%"></i></div></td>
+    <td class="num">${a.questoes}</td><td class="num">${a.questoes?Math.round(a.acertos/a.questoes*100)+'%':'–'}</td>
+    <td>${a.ultimoEstudo?`há ${diasEntre(a.ultimoEstudo,hoje())}d`:'nunca'}</td><td class="small">${esc(a.motivo)}</td></tr>`);
+  return h+`</table></div></div>`;
+}
+
+function vAjustes(){
+  const c=S.rotina,dn=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  return`<div class="card"><h2>Rotina</h2>
+  <label>Minutos disponíveis por dia</label>
+  <div class="days">${dn.map((n,i)=>`<div><div class="small" style="text-align:center">${n}</div><input type="number" min="0" step="10" data-h="${i}" value="${c.horas[i]}"></div>`).join('')}</div>
+  <p class="hint">Seja realista: cumprir 1h todo dia vence planejar 4h e falhar.</p>
+  <div class="row"><div><label>Bloco de estudo (min)</label><input type="number" min="20" step="5" data-r="bloco" value="${c.bloco}"></div>
+  <div><label>Meta de questões por bloco</label><input type="number" min="0" data-r="qMeta" value="${c.qMeta}"></div></div>
+  <div class="btns" style="margin-top:12px"><button class="pri" data-act="applyCfg">Salvar e refazer missão de hoje</button></div></div>
+  <div class="card"><h2>IA</h2>
+  <label>Chave da API da Anthropic</label><input type="password" id="iaKey" value="${esc(S.ia.key)}" placeholder="sk-ant-…" autocomplete="off">
+  <label>Modelo</label><select id="iaModel">
+    ${[['claude-opus-5-5','Claude Opus 5.5 (melhor qualidade)'],['claude-sonnet-5-5','Claude Sonnet 5.5 (mais barato)'],['claude-haiku-5-5','Claude Haiku 5.5 (mais rápido)']].map(([v,l])=>`<option value="${v}" ${S.ia.model===v?'selected':''}>${l}</option>`).join('')}</select>
+  <p class="hint">Crie a chave em console.anthropic.com. Ela fica salva só neste navegador e vai direto para a API da Anthropic. Cada análise custa centavos; pesquisas na web custam um pouco mais.</p>
+  <div class="btns"><button class="pri" data-act="saveIA">Salvar</button></div></div>
+  <div class="card"><h2>Backup</h2><p class="hint" style="margin-top:0">Os dados ficam só neste navegador. Exporte de vez em quando (a chave da API não vai no backup).</p>
+  <div class="btns"><button data-act="export">Exportar backup</button><button data-act="import">Importar backup</button>
+  <button class="ghost" data-act="reset" style="color:var(--bad)">Apagar tudo</button></div>
+  <input type="file" id="fileIn" accept=".json" style="display:none"></div>`;
+}
+
+/* ===================== Modal / foco ===================== */
+function modal(html){$('#modalBody').innerHTML=html;$('#modal').classList.add('on')}
+function fecharModal(){$('#modal').classList.remove('on')}
+function toast(msg){modal(`<p style="margin-top:0">${esc(msg)}</p><div class="btns"><button class="pri" data-act="close">Ok</button></div>`)}
+function abrirLog(itemId,minPadrao){
+  const it=missaoHoje().itens.find(i=>i.id===itemId),r=acharAssunto(it.assuntoId);
+  modal(`<h2>Registrar: ${esc(r.a.nome)}</h2>
+  <div class="row"><div><label>Minutos estudados</label><input type="number" id="lMin" value="${minPadrao??it.min}"></div>
+  <div><label>Questões feitas</label><input type="number" id="lQ" value="0" min="0"></div></div>
+  <div class="row"><div><label>Acertos</label><input type="number" id="lA" value="0" min="0"></div>
+  <div><label>Seu domínio agora (1–5)</label><select id="lD">${[1,2,3,4,5].map(n=>`<option ${+r.a.dominio===n?'selected':''}>${n}</option>`).join('')}</select></div></div>
+  <p class="hint">Resolveu no Tec? Copie de lá o total de questões e acertos.</p>
+  <div class="btns"><button class="pri" data-act="saveLog" data-id="${itemId}">Salvar</button><button class="ghost" data-act="close">Cancelar</button></div>`);
+}
+let timer=null,restante=0,decorrido=0,focoItem=null,pausado=false;
+function iniciarFoco(itemId){
+  const it=missaoHoje().itens.find(i=>i.id===itemId),r=acharAssunto(it.assuntoId);
+  focoItem=itemId;restante=it.min*60;decorrido=0;pausado=false;
+  $('#focusTag').textContent=(it.tipo==='revisao'?'Revisão · ':'Estudo · ')+r.d.nome;
+  $('#focusTitle').textContent=r.a.nome;$('#fPause').textContent='Pausar';
+  $('#focus').classList.add('on');tick();clearInterval(timer);timer=setInterval(tick,1000);
+}
+function tick(){
+  if(!pausado&&restante>0){restante--;decorrido++}
+  const m=Math.floor(restante/60),s=restante%60;
+  $('#clock').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.title=restante>0?`${m}:${String(s).padStart(2,'0')} · posse`:'Tempo! · posse';
+  if(restante===0&&timer){clearInterval(timer);timer=null;beep()}
+}
+function beep(){try{const a=new AudioContext(),o=a.createOscillator();o.frequency.value=880;o.connect(a.destination);o.start();o.stop(a.currentTime+.4)}catch(e){}}
+function sairFoco(concluir){
+  clearInterval(timer);timer=null;$('#focus').classList.remove('on');document.title='Posse';
+  if(concluir)abrirLog(focoItem,Math.max(1,Math.round(decorrido/60)));
+}
+$('#fPause').onclick=()=>{pausado=!pausado;$('#fPause').textContent=pausado?'Continuar':'Pausar'};
+$('#fDone').onclick=()=>sairFoco(true);
+$('#fExit').onclick=()=>sairFoco(false);
+
+/* ===================== Eventos ===================== */
+$('#nav').onclick=e=>{const t=e.target.dataset.tab;if(t){tab=t;render();scrollTo(0,0)}};
+document.addEventListener('click',ev=>{
+  const g=ev.target.closest('[data-tab-go]');if(g){ev.preventDefault();tab=g.dataset.tabGo;render();scrollTo(0,0);return}
+  const b=ev.target.closest('[data-act]');if(!b)return;
+  const e=E();
+  const A={
+    close:fecharModal,
+    log:()=>abrirLog(b.dataset.id),
+    focus:()=>iniciarFoco(b.dataset.id),
+    tecCopy:()=>tecCopy(b.dataset.id),
+    replan:replanejar,
+    saveLog:()=>{
+      const it=missaoHoje().itens.find(i=>i.id===b.dataset.id);
+      const q=Math.max(0,+$('#lQ').value||0),ac=Math.min(q,Math.max(0,+$('#lA').value||0));
+      fecharModal();registrar(it,Math.max(0,+$('#lMin').value||0),q,ac,+$('#lD').value);
+    },
+    ativar:()=>{S.ativo=b.dataset.e;salvar();render()},
+    delEd:()=>{if(confirm('Remover este edital? O histórico dele some da fila.')){S.editais=S.editais.filter(x=>x.id!==b.dataset.e);if(S.ativo===b.dataset.e)S.ativo=S.editais[0]?.id||null;salvar();render()}},
+    addPreset:()=>{const ne=edDePreset(PRESETS.find(p=>p.id===b.dataset.p));S.editais.push(ne);S.ativo=ne.id;salvar();render()},
+    addVazio:()=>{const ne=edDePreset({nome:'Novo concurso',disciplinas:[]});S.editais.push(ne);S.ativo=ne.id;salvar();render()},
+    addDisc:()=>{e.disciplinas.push({id:uid(),nome:'Nova disciplina',peso:1,assuntos:[]});salvar();render()},
+    addAss:()=>{e.disciplinas.find(d=>d.id===b.dataset.d).assuntos.push(novoAssunto('Novo assunto'));salvar();render()},
+    delDisc:()=>{if(confirm('Remover a disciplina e seus assuntos?')){e.disciplinas=e.disciplinas.filter(d=>d.id!==b.dataset.d);refazerHoje();salvar();render()}},
+    delAss:()=>{e.disciplinas.forEach(d=>d.assuntos=d.assuntos.filter(a=>a.id!==b.dataset.a));refazerHoje();salvar();render()},
+    importCsv:()=>importarCsv($('#csv').value),
+    applyCfg:()=>{refazerHoje();salvar();tab='hoje';render()},
+    saveIA:()=>{S.ia.key=$('#iaKey').value.trim();S.ia.model=$('#iaModel').value;salvar();toast('Configuração da IA salva.')},
+    iaEdital,iaProva,iaWeb,mentor,aplicarIA,
+    descartarIA:()=>{iaRes=null;render()},
+    limparChat:()=>{S.chat=[];salvar();render()},
+    export:()=>{const c={...S,ia:{...S.ia,key:''}};const u=URL.createObjectURL(new Blob([JSON.stringify(c,null,1)],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download=`posse-backup-${hoje()}.json`;a.click();URL.revokeObjectURL(u)},
+    import:()=>$('#fileIn').click(),
+    reset:()=>{if(confirm('Apagar todos os dados? Exporte um backup antes.')){S=novoEstado();salvar();render()}}
+  };
+  A[b.dataset.act]?.();
+});
+document.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.id==='mIn'&&!iaBusy)mentor()});
+$('#modal').onclick=ev=>{if(ev.target.id==='modal')fecharModal()};
+document.addEventListener('change',ev=>{
+  const t=ev.target,e=E();
+  if(t.id==='fileIn'&&t.files[0]){t.files[0].text().then(x=>{try{const o=JSON.parse(x);if(o.v!==2||!o.editais)throw 0;o.ia={...o.ia,key:S.ia.key};S=o;salvar();render();toast('Backup importado.')}catch(_){toast('Arquivo inválido.')}});return}
+  if(t.dataset.r){S.rotina[t.dataset.r]=+t.value||0;salvar();return}
+  if(t.dataset.h!==undefined){S.rotina.horas[+t.dataset.h]=Math.max(0,+t.value||0);salvar();return}
+  if(t.dataset.ef&&e){e[t.dataset.ef]=t.value;salvar();render();return}
+  const f=t.dataset.f;if(!f||!e)return;
+  if(f==='dnome'||f==='dpeso'){const d=e.disciplinas.find(x=>x.id===t.dataset.d);if(f==='dnome')d.nome=t.value;else d.peso=+t.value||0}
+  else{const r=acharAssunto(t.dataset.a);if(!r)return;
+    if(f==='anome')r.a.nome=t.value;if(f==='aincid')r.a.incid=+t.value||0;if(f==='adom')r.a.dominio=+t.value;if(f==='atec')r.a.tecUrl=t.value.trim()}
+  salvar();
+});
+function importarCsv(txt){
+  const e=E();const linhas=txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  if(!linhas.length)return toast('Cole ao menos uma linha.');
+  let n=0;
+  for(const l of linhas){
+    const p=l.split(/[;\t]/).map(x=>x.trim());if(p.length<2||/^disciplina$/i.test(p[0]))continue;
+    const[dn,an,inc,peso]=p;
+    let d=e.disciplinas.find(x=>x.nome.toLowerCase()===dn.toLowerCase());
+    if(!d){d={id:uid(),nome:dn,peso:+peso||1,assuntos:[]};e.disciplinas.push(d)}
+    if(peso)d.peso=+peso||d.peso;
+    let a=d.assuntos.find(x=>x.nome.toLowerCase()===an.toLowerCase());
+    if(!a){a=novoAssunto(an);d.assuntos.push(a)}
+    if(inc)a.incid=+String(inc).replace(',','.')||0;n++;
+  }
+  refazerHoje();salvar();render();toast(`${n} assuntos importados. A missão de hoje foi refeita.`);
+}
+if(!S.ativo&&S.editais.length)S.ativo=S.editais[0].id;
+render();
+</script>
+</body>
+</html>

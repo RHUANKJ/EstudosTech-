@@ -1,0 +1,50 @@
+# posse. — do edital à posse
+
+App pessoal de estudo para concursos, feito para quem tem dificuldade com rotina e disciplina.
+Você não decide o que estudar: o app monta a **missão do dia** com base no que a banca mais cobra, no que você mais erra e no que está há mais tempo sem ver.
+
+## O que tem
+
+- **Vários editais.** Alterne entre concursos. Já vêm prontos:
+  - **PMPE – Soldado** (Edital 001/2026, Instituto AOCP, prova em 21/02/2027), com incidência real contada na prova de Soldado 2024;
+  - **PMPE – 2º Tenente QOPM (CFO)** (mesmo edital);
+  - **PCPE – Agente/Escrivão** (estrutura do edital anterior, Cebraspe; atualizar com o edital 2026).
+- **Missão do dia**: blocos de estudo e revisões que cabem no tempo que você tem em cada dia da semana.
+- **Replanejamento automático**: se você falhar um dia, nada acumula. A fila se reorganiza.
+- **Modo foco** com cronômetro, **sequência de dias**, **revisão espaçada** (1, 7 e 30 dias) e **desempenho por assunto**.
+- **TecConcursos (link direcionado)**: cada assunto abre o seu caderno de questões no Tec. Você resolve lá e registra os acertos aqui.
+- **IA de direcionamento** (Claude, da Anthropic):
+  1. **Ler edital**: envie o PDF e ela monta disciplinas, pesos e assuntos.
+  2. **Raio-X de provas anteriores**: envie PDFs de provas e ela classifica cada questão por assunto, gerando a incidência real.
+  3. **Pesquisa na web**: estima a relevância de cada assunto e os temas mais cobrados pela banca, com fontes.
+  4. **Mentor**: um chat que conhece o seu edital, a sua fila e a sua constância.
+
+## Como a prioridade é calculada
+
+Cada assunto recebe uma nota a partir de:
+
+- **incidência**: questões em provas anteriores (70%) e relevância estimada pela IA (30%);
+- **peso** da disciplina, ou seja, quantas questões ela tem na prova;
+- **domínio** que você declarou (1 a 5);
+- **taxa de erro** nas suas questões;
+- **dias** desde a última vez que você viu o assunto.
+
+## Como usar
+
+Abra o `index.html` no navegador. Também dá para publicar no GitHub Pages e instalar no celular.
+Os dados ficam só no navegador. Use **Ajustes → Exportar backup** de vez em quando.
+
+Para a IA, crie uma chave em https://console.anthropic.com e cole em **Ajustes → IA**.
+A chave fica salva apenas no seu navegador e não vai para o backup nem para o repositório.
+
+> Este modo, com a chave no navegador, serve para **uso pessoal**. Para abrir o app para outras pessoas, a IA precisa passar por um backend que guarde a chave no servidor.
+
+## Integração com o TecConcursos
+
+O Tec não tem API pública e a raspagem do site provavelmente viola os termos de uso. Por isso, a integração atual é por link direcionado.
+A proposta de parceria oficial está em [`PARCERIA-TEC.md`](PARCERIA-TEC.md).
+
+## Estrutura
+
+- `index.html`: o app inteiro (HTML, CSS e JS, sem build).
+- `editais.js`: os modelos de edital (PMPE Soldado, PMPE Oficial, PCPE).
