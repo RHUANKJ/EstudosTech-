@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Posse</title>
 <meta name="theme-color" content="#4f46e5">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234f46e5'/%3E%3Cstop offset='1' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Cpath d='M9 17l5 5 9-12' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -96,6 +99,18 @@ td.num,th.num{text-align:right}
 @keyframes s{to{transform:rotate(360deg)}}
 .res{font-size:13px}.res li{margin:3px 0}
 a{color:var(--accent)}
+/* ---------- Horários, agenda, onboarding ---------- */
+.item .hora{flex:none;width:46px;font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:700;color:var(--accent);padding-top:2px;display:flex;flex-direction:column}
+.item .hora span{font-size:11px;font-weight:500;color:var(--muted)}
+.rot td{padding:6px}.rot tr.off td{opacity:.55}.rot input[type=time]{width:110px;padding:5px 6px}
+.hrs{display:flex;align-items:center;gap:4px}.hrs input{width:62px;text-align:center;padding:5px 4px}.hrs button{width:30px;height:30px;padding:0;border-radius:8px;font-size:16px;line-height:1}.hrs span{color:var(--muted);font-size:12px}
+.agenda{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.agenda .card{margin:0}.day.today{border-color:var(--accent)}
+.slot{display:flex;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:13px}.slot:first-of-type{border-top:0}
+.slot .mono{color:var(--accent);font-weight:700;flex:none;width:42px}.slot.rev .mono{color:var(--warn)}.slot.done{opacity:.45}.slot .t{font-weight:600}
+.onb{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.onb .card{margin:0;position:relative}
+.step{width:28px;height:28px;border-radius:9px;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:700;margin-bottom:10px;font-family:"JetBrains Mono",monospace}
+@media (max-width:900px){.onb{grid-template-columns:1fr}}
 /* ---------- Layout: menu lateral + painel ---------- */
 .app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
 .side{position:sticky;top:0;height:100vh;background:var(--card);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px}
@@ -164,6 +179,7 @@ nav button.on{background:var(--soft);color:var(--accent)}
   <nav id="nav">
     <button data-tab="hoje" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Painel</span></button>
     <button data-tab="editais"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span>Editais</span></button>
+    <button data-tab="agenda"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Agenda</span></button>
     <button data-tab="ia"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg><span>IA</span></button>
     <button data-tab="desempenho"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Desempenho</span></button>
     <button data-tab="ajustes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Ajustes</span></button>
@@ -217,11 +233,13 @@ function edDePreset(p){
 
 /* ===================== Estado ===================== */
 function novoEstado(){
-  return{v:2,rotina:{horas:[0,120,120,120,120,120,180],bloco:50,qMeta:15},
+  return{v:2,rotina:{horas:[0,120,120,120,120,120,180],inicio:['09:00','19:00','19:00','19:00','19:00','19:00','09:00'],pausa:10,bloco:50,qMeta:15},
     editais:[],ativo:null,sessoes:[],revisoes:[],missoes:{},ia:{key:'',model:'claude-opus-5-5'},chat:[]};
 }
 let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!S||S.v!==2)S=novoEstado();
+if(!S.rotina.inicio)S.rotina.inicio=['09:00','19:00','19:00','19:00','19:00','19:00','09:00'];
+if(S.rotina.pausa==null)S.rotina.pausa=10;
 function salvar(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){alert('Não consegui salvar no navegador. Exporte um backup em Ajustes.')}}
 const E=()=>S.editais.find(e=>e.id===S.ativo)||null;
 const assuntosDe=e=>e?e.disciplinas.flatMap(d=>d.assuntos.map(a=>({...a,disc:d}))):[];
@@ -257,15 +275,15 @@ function motivo(inc,lacuna,erro,a){
 }
 
 /* ===================== Missão do dia ===================== */
-function gerarMissao(data,manter=[]){
+function montarItens(data,manter=[],excluir=new Set(),exclRev=new Set()){
   const dow=new Date(data+'T12:00:00').getDay();
   let budget=(+S.rotina.horas[dow]||0)-manter.reduce((s,i)=>s+i.min,0);
-  const itens=[...manter];const usados=new Set(manter.map(i=>i.assuntoId+i.tipo));
+  const itens=[...manter];const usados=new Set([...manter.map(i=>i.assuntoId+i.tipo),...[...excluir].map(x=>x+'estudo')]);
   const ids=new Set(assuntosDe(E()).map(a=>a.id));
   let revBudget=Math.max(0,Math.round(budget*.4));
   for(const r of S.revisoes.filter(r=>!r.feita&&r.due<=data&&ids.has(r.assuntoId)).sort((a,b)=>a.due.localeCompare(b.due))){
     if(revBudget<15||budget<15)break;
-    if(usados.has(r.assuntoId+'revisao'))continue;
+    if(usados.has(r.assuntoId+'revisao')||exclRev.has(r.id))continue;
     itens.push({id:uid(),tipo:'revisao',assuntoId:r.assuntoId,revId:r.id,min:15,qtd:10,feito:false});
     usados.add(r.assuntoId+'revisao');revBudget-=15;budget-=15;
   }
@@ -277,7 +295,24 @@ function gerarMissao(data,manter=[]){
     itens.push({id:uid(),tipo:'estudo',assuntoId:a.id,min:m,qtd:+S.rotina.qMeta||15,feito:false,motivo:a.motivo});
     usados.add(a.id+'estudo');budget-=m;
   }
-  S.missoes[mKey(data)]={data,itens};salvar();return S.missoes[mKey(data)];
+  return itens;
+}
+function gerarMissao(data,manter=[]){S.missoes[mKey(data)]={data,itens:montarItens(data,manter)};salvar();return S.missoes[mKey(data)]}
+const hm=t=>{const[a,b]=String(t||'19:00').split(':').map(Number);return a*60+(b||0)};
+const fmtHM=m=>`${String(Math.floor(m/60)%24).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+function horarios(itens,data){
+  const dow=new Date(data+'T12:00:00').getDay();let t=hm(S.rotina.inicio[dow]);const p=+S.rotina.pausa||0;
+  return itens.map(i=>{const s=t;t+=i.min+p;return{ini:fmtHM(s),fim:fmtHM(s+i.min)}});
+}
+function planoSemana(){
+  const out=[],usados=new Set(),revs=new Set();
+  for(let k=0;k<7;k++){
+    const d=addDias(hoje(),k);
+    const itens=k===0?missaoHoje().itens:montarItens(d,[],usados,revs);
+    itens.forEach(i=>{if(i.tipo==='estudo')usados.add(i.assuntoId);if(i.revId)revs.add(i.revId)});
+    out.push({d,itens});
+  }
+  return out;
 }
 const missaoHoje=()=>S.missoes[mKey(hoje())]||gerarMissao(hoje());
 function replanejar(){gerarMissao(hoje(),missaoHoje().itens.filter(i=>i.feito));render()}
@@ -295,7 +330,7 @@ function registrar(item,min,q,ac,dominio){
     S.revisoes=S.revisoes.filter(x=>!(x.assuntoId===a.id&&!x.feita));
     [1,7,30].forEach(n=>S.revisoes.push({id:uid(),assuntoId:a.id,due:addDias(hoje(),n),feita:false}));
   }else if(item.revId){const rv=S.revisoes.find(x=>x.id===item.revId);if(rv)rv.feita=true}
-  item.feito=true;salvar();render();
+  if(item.id)item.feito=true;salvar();render();
 }
 
 /* ===================== TecConcursos (link direcionado) ===================== */
@@ -449,13 +484,23 @@ function render(){
   $('#sideFoot').innerHTML=(S.editais.length>1?`<label style="margin:0 4px">Estudando</label><select id="edSel">${S.editais.map(x=>`<option value="${x.id}" ${x.id===S.ativo?'selected':''}>${esc(x.nome+' · '+x.cargo)}</option>`).join('')}</select>`:'')+
     (n!=null&&n>=0?`<div class="cd-card"><small>Faltam</small><b>${n} dias</b><small>prova em ${e.dataProva.split('-').reverse().join('/')}</small></div>`:'');
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
-  $('#main').innerHTML=(!e&&!['editais','ajustes','ia'].includes(tab))?vSemEdital():{hoje:vHoje,editais:vEditais,ia:vIA,desempenho:vDesempenho,ajustes:vAjustes}[tab]();
+  $('#main').innerHTML=(!e&&!['editais','ajustes','ia'].includes(tab))?vSemEdital():{hoje:vHoje,agenda:vAgenda,editais:vEditais,ia:vIA,desempenho:vDesempenho,ajustes:vAjustes}[tab]();
   if(tab==='ia'){const c=$('.chat');if(c)c.scrollTop=c.scrollHeight}
 }
 function vSemEdital(){
-  return`<div class="hero"><h1>Bem-vindo ao posse<span style="color:var(--accent2)">.</span></h1><p>Do edital à posse, um dia de cada vez.</p></div>
-  <div class="card"><h2>Comece escolhendo seu concurso</h2><p class="hint" style="margin-top:0">Você pode ter vários editais e alternar entre eles.</p>
-  <div class="btns"><button class="pri" data-tab-go="editais">Adicionar edital</button></div></div>`;
+  return`<div class="hero"><h1>Bem-vindo ao posse<span style="color:var(--accent2)">.</span></h1><p>Do edital à posse, um dia de cada vez. Leva 30 segundos.</p></div>
+  <div class="onb">
+  <div class="card"><div class="step">1</div><h2>Qual concurso?</h2>
+    <select id="onbEd">${PRESETS.map(p=>`<option value="${p.id}">${esc(p.nome)} · ${esc(p.cargo)}</option>`).join('')}<option value="">Outro (ler edital com IA)</option></select>
+    <p class="hint">Dá para adicionar outros depois, na aba Editais.</p></div>
+  <div class="card"><div class="step">2</div><h2>Quanto tempo você tem?</h2>
+    <div class="row"><div><label>Segunda a sexta (horas)</label><input id="onbU" type="text" inputmode="decimal" value="2"></div><div><label>A partir de</label><input id="onbI" type="time" value="19:00"></div></div>
+    <div class="row"><div><label>Sábado (horas)</label><input id="onbS" type="text" inputmode="decimal" value="3"></div><div><label>Domingo (horas)</label><input id="onbD" type="text" inputmode="decimal" value="0"></div></div>
+    <label>Fim de semana a partir de</label><input id="onbIF" type="time" value="09:00">
+    <p class="hint">Comece pequeno. Constância vence intensidade.</p></div>
+  <div class="card"><div class="step">3</div><h2>Pronto.</h2><p class="hint" style="margin-top:0">O app monta sua missão de hoje pelos assuntos que mais caem e reorganiza sozinho se você falhar um dia.</p>
+    <div class="btns"><button class="pri" data-act="onb">Montar meu plano →</button></div></div>
+  </div>`;
 }
 function saudacao(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
 const CORES=['#6366f1','#06b6d4','#a855f7','#10b981','#f59e0b','#f43f5e','#0ea5e9','#84cc16','#ec4899','#14b8a6','#eab308','#8b5cf6'];
@@ -494,19 +539,19 @@ function vHoje(){
   let L=`<div class="card"><div class="card-h"><h2>Missão de hoje</h2><span class="sub mono">${feitos}/${tot}</span></div>
     <div class="bar prog"><i style="width:${tot?feitos/tot*100:0}%"></i></div>`;
   if(!tot)L+=`<div class="empty">Sem tempo de estudo configurado para hoje.<br><button style="margin-top:8px" data-tab-go="ajustes">Ajustar rotina</button></div>`;
-  for(const it of m.itens){
-    const r=acharAssunto(it.assuntoId);if(!r)continue;const rev=it.tipo==='revisao';
-    L+=`<div class="item ${it.feito?'done':''}">
-      <button class="check" title="Registrar" data-act="log" data-id="${it.id}" ${it.feito?'disabled':''}></button>
+  const hs=horarios(m.itens,h0);
+  m.itens.forEach((it,ix)=>{
+    const r=acharAssunto(it.assuntoId);if(!r)return;const rev=it.tipo==='revisao';
+    L+=`<div class="item ${it.feito?'done':''}"><div class="hora">${hs[ix].ini}<span>${hs[ix].fim}</span></div>
       <div class="body">
         <div><span class="tag ${rev?'rev':''}">${rev?'Revisão':'Estudo'}</span><span class="small">${esc(r.d.nome)}</span></div>
         <div class="t">${esc(r.a.nome)}</div>
         <div class="d">${it.min} min · ${rev?`${it.qtd} questões de revisão`:`teoria + ${it.qtd} questões`}${it.motivo?` · <i>${esc(it.motivo)}</i>`:''}</div>
         ${r.a.temas?.length?`<div class="temas"><b>Mais cobrado:</b> ${r.a.temas.map(esc).join(' · ')}</div>`:''}
         ${it.feito?'':`<div class="btns"><button class="pri" data-act="focus" data-id="${it.id}">▶ Começar foco</button>${tecBotao(r.a)}</div>`}
-      </div></div>`;
-  }
-  L+=`<div class="btns" style="margin-top:12px"><button class="ghost" data-act="replan">↻ Replanejar o resto do dia</button></div></div>`;
+      </div><button class="check" title="Marcar como feito" data-act="log" data-id="${it.id}" ${it.feito?'disabled':''}></button></div>`;
+  });
+  L+=`<div class="btns" style="margin-top:12px"><button data-act="livre">＋ Estudo livre</button><button class="ghost" data-act="replan">↻ Replanejar o resto do dia</button></div></div>`;
   // ---- semana (barras)
   const dn=['D','S','T','Q','Q','S','S'];
   const dias=[...Array(7)].map((_,i)=>addDias(h0,i-6));
@@ -537,6 +582,19 @@ function vHoje(){
   return h+`<div class="dash"><div>${L}</div><div>${R}</div></div>`;
 }
 
+function vAgenda(){
+  const sem=planoSemana(),nomes=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  let h=`<div class="hero"><h1>Agenda da semana</h1><p>Sua semana já planejada, hora a hora. Os próximos dias se ajustam sozinhos ao que você fizer hoje.</p></div><div class="agenda">`;
+  sem.forEach(({d,itens},k)=>{
+    const dt=new Date(d+'T12:00:00'),hs=horarios(itens,d),tot=itens.reduce((t,i)=>t+i.min,0);
+    h+=`<div class="card day ${k===0?'today':''}"><div class="card-h"><div><b>${k===0?'Hoje':k===1?'Amanhã':nomes[dt.getDay()]}</b> <span class="sub">${d.split('-').reverse().slice(0,2).join('/')}</span></div><span class="sub mono">${tot?fmtH(tot):'folga'}</span></div>`;
+    if(!itens.length)h+=`<p class="hint" style="margin:0">Descanso. Recarregar também faz parte.</p>`;
+    itens.forEach((it,ix)=>{const r=acharAssunto(it.assuntoId);if(!r)return;
+      h+=`<div class="slot ${it.feito?'done':''} ${it.tipo==='revisao'?'rev':''}"><span class="mono">${hs[ix].ini}</span><div><div class="t">${esc(r.a.nome)}</div><div class="small">${it.tipo==='revisao'?'Revisão':'Estudo'} · ${esc(r.d.nome)} · ${it.min} min</div></div></div>`});
+    h+='</div>';
+  });
+  return h+'</div>';
+}
 function vEditais(){
   const e=E();
   let h=`<div class="card"><h2>Seus editais</h2>`;
@@ -656,12 +714,20 @@ function vDesempenho(){
 
 function vAjustes(){
   const c=S.rotina,dn=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  return`<div class="card"><h2>Rotina</h2>
-  <label>Minutos disponíveis por dia</label>
-  <div class="days">${dn.map((n,i)=>`<div><div class="small" style="text-align:center">${n}</div><input type="number" min="0" step="10" data-h="${i}" value="${c.horas[i]}"></div>`).join('')}</div>
+  const ord=[1,2,3,4,5,6,0],tot=c.horas.reduce((t,x)=>t+(+x||0),0);
+  return`<div class="card"><div class="card-h"><h2>Rotina por hora</h2><span class="pill">${fmtH(tot)} / semana</span></div>
+  <p class="hint" style="margin-top:0">Defina a hora em que você começa e quantas horas estuda em cada dia. O app encaixa os blocos nesse horário.</p>
+  <div class="tablewrap"><table class="rot"><tr><th>Dia</th><th>Começo</th><th>Horas</th><th>Termina</th><th class="num">Blocos</th></tr>
+  ${ord.map(i=>{const m=+c.horas[i]||0;const nb=m?Math.max(1,Math.round(m/((+c.bloco||50)))):0;const fim=m?fmtHM(hm(c.inicio[i])+m+Math.max(0,nb-1)*(+c.pausa||0)):'—';
+    return`<tr class="${m?'':'off'}"><td><b>${['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][i]}</b></td>
+    <td><input type="time" data-ini="${i}" value="${esc(c.inicio[i])}"></td>
+    <td><div class="hrs"><button data-act="hmenos" data-i="${i}" aria-label="menos">−</button><input type="text" inputmode="decimal" data-h="${i}" value="${String(+(m/60).toFixed(2)).replace('.',',')}"><span>h</span><button data-act="hmais" data-i="${i}" aria-label="mais">+</button></div></td>
+    <td class="mono">${fim}</td><td class="num mono">${nb||'folga'}</td></tr>`}).join('')}
+  </table></div>
   <p class="hint">Seja realista: cumprir 1h todo dia vence planejar 4h e falhar.</p>
-  <div class="row"><div><label>Bloco de estudo (min)</label><input type="number" min="20" step="5" data-r="bloco" value="${c.bloco}"></div>
-  <div><label>Meta de questões por bloco</label><input type="number" min="0" data-r="qMeta" value="${c.qMeta}"></div></div>
+  <div class="row"><div><label>Duração do bloco</label><select data-r="bloco">${[25,30,40,50,60,90].map(v=>`<option value="${v}" ${+c.bloco===v?'selected':''}>${v} min</option>`).join('')}</select></div>
+  <div><label>Pausa entre blocos</label><select data-r="pausa">${[0,5,10,15,20].map(v=>`<option value="${v}" ${+c.pausa===v?'selected':''}>${v} min</option>`).join('')}</select></div></div>
+  <div class="row"><div><label>Meta de questões por bloco</label><input type="number" min="0" data-r="qMeta" value="${c.qMeta}"></div><div></div></div>
   <div class="btns" style="margin-top:12px"><button class="pri" data-act="applyCfg">Salvar e refazer missão de hoje</button></div></div>
   <div class="card"><h2>IA</h2>
   <label>Chave da API da Anthropic</label><input type="password" id="iaKey" value="${esc(S.ia.key)}" placeholder="sk-ant-…" autocomplete="off">
@@ -688,6 +754,16 @@ function abrirLog(itemId,minPadrao){
   <div><label>Seu domínio agora (1–5)</label><select id="lD">${[1,2,3,4,5].map(n=>`<option ${+r.a.dominio===n?'selected':''}>${n}</option>`).join('')}</select></div></div>
   <p class="hint">Resolveu no Tec? Copie de lá o total de questões e acertos.</p>
   <div class="btns"><button class="pri" data-act="saveLog" data-id="${itemId}">Salvar</button><button class="ghost" data-act="close">Cancelar</button></div>`);
+}
+function abrirLivre(){
+  const e=E();
+  modal(`<h2>Estudo livre</h2><p class="hint" style="margin-top:0">Estudou algo fora da missão? Registre aqui para contar na sua constância e no desempenho.</p>
+  <label>Assunto</label><select id="lvAss">${e.disciplinas.map(d=>`<optgroup label="${esc(d.nome)}">${d.assuntos.map(a=>`<option value="${a.id}">${esc(a.nome)}</option>`).join('')}</optgroup>`).join('')}</select>
+  <div class="row"><div><label>Tipo</label><select id="lvTipo"><option value="estudo">Estudo (gera revisões)</option><option value="questoes">Só questões</option></select></div>
+  <div><label>Minutos</label><input type="number" id="lMin" value="30"></div></div>
+  <div class="row"><div><label>Questões feitas</label><input type="number" id="lQ" value="0" min="0"></div><div><label>Acertos</label><input type="number" id="lA" value="0" min="0"></div></div>
+  <label>Seu domínio agora (1–5)</label><select id="lD">${[1,2,3,4,5].map(n=>`<option ${n===2?'selected':''}>${n}</option>`).join('')}</select>
+  <div class="btns"><button class="pri" data-act="saveLivre">Salvar</button><button class="ghost" data-act="close">Cancelar</button></div>`);
 }
 let timer=null,restante=0,decorrido=0,focoItem=null,pausado=false;
 function iniciarFoco(itemId){
@@ -725,6 +801,18 @@ document.addEventListener('click',ev=>{
     focus:()=>iniciarFoco(b.dataset.id),
     tecCopy:()=>tecCopy(b.dataset.id),
     replan:replanejar,
+    hmais:()=>{const i=+b.dataset.i;S.rotina.horas[i]=Math.min(960,(+S.rotina.horas[i]||0)+30);refazerHoje();salvar();render()},
+    hmenos:()=>{const i=+b.dataset.i;S.rotina.horas[i]=Math.max(0,(+S.rotina.horas[i]||0)-30);refazerHoje();salvar();render()},
+    livre:abrirLivre,
+    saveLivre:()=>{const id=$('#lvAss').value;const q=Math.max(0,+$('#lQ').value||0),ac=Math.min(q,Math.max(0,+$('#lA').value||0));fecharModal();registrar({tipo:$('#lvTipo').value,assuntoId:id},Math.max(0,+$('#lMin').value||0),q,ac,+$('#lD').value)},
+    onb:()=>{
+      const p=PRESETS.find(x=>x.id===$('#onbEd').value);if(!p){tab='ia';render();return}
+      const ne=edDePreset(p);S.editais.push(ne);S.ativo=ne.id;
+      const hs=x=>Math.round(Math.max(0,+String(x).replace(',','.')||0)*60);
+      const u=hs($('#onbU').value),sa=hs($('#onbS').value),dm=hs($('#onbD').value),ini=$('#onbI').value||'19:00';
+      S.rotina.horas=[dm,u,u,u,u,u,sa];S.rotina.inicio=[$('#onbIF').value||'09:00',ini,ini,ini,ini,ini,$('#onbIF').value||'09:00'];
+      refazerHoje();salvar();tab='hoje';render();
+    },
     saveLog:()=>{
       const it=missaoHoje().itens.find(i=>i.id===b.dataset.id);
       const q=Math.max(0,+$('#lQ').value||0),ac=Math.min(q,Math.max(0,+$('#lA').value||0));
@@ -756,8 +844,10 @@ document.addEventListener('change',ev=>{
   const t=ev.target,e=E();
   if(t.id==='fileIn'&&t.files[0]){t.files[0].text().then(x=>{try{const o=JSON.parse(x);if(o.v!==2||!o.editais)throw 0;o.ia={...o.ia,key:S.ia.key};S=o;salvar();render();toast('Backup importado.')}catch(_){toast('Arquivo inválido.')}});return}
   if(t.id==='edSel'){S.ativo=t.value;salvar();render();return}
-  if(t.dataset.r){S.rotina[t.dataset.r]=+t.value||0;salvar();return}
-  if(t.dataset.h!==undefined){S.rotina.horas[+t.dataset.h]=Math.max(0,+t.value||0);salvar();return}
+  if(t.dataset.r){S.rotina[t.dataset.r]=+t.value||0;refazerHoje();salvar();render();return}
+  if(t.dataset.h!==undefined){S.rotina.horas[+t.dataset.h]=Math.round(Math.max(0,Math.min(16,+String(t.value).replace(',','.')||0))*60);refazerHoje();salvar();render();return}
+  if(t.dataset.ini!==undefined){S.rotina.inicio[+t.dataset.ini]=t.value||'19:00';salvar();render();return}
+  if(t.id==='onbEd'||t.id==='lvAss')return;
   if(t.dataset.ef&&e){e[t.dataset.ef]=t.value;salvar();render();return}
   const f=t.dataset.f;if(!f||!e)return;
   if(f==='dnome'||f==='dpeso'){const d=e.disciplinas.find(x=>x.id===t.dataset.d);if(f==='dnome')d.nome=t.value;else d.peso=+t.value||0}
@@ -783,6 +873,7 @@ function importarCsv(txt){
 }
 if(!S.ativo&&S.editais.length)S.ativo=S.editais[0].id;
 render();
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>

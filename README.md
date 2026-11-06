@@ -10,7 +10,11 @@ Você não decide o que estudar: o app monta a **missão do dia** com base no qu
   - **PMPE – 2º Tenente QOPM (CFO)** (mesmo edital);
   - **PCPE – Agente/Escrivão** (estrutura do edital anterior, Cebraspe; atualizar com o edital 2026).
 - **Painel** com indicadores, ciclo de estudos (meta por disciplina), gráfico da semana, próximas revisões e mapa de constância.
-- **Missão do dia**: blocos de estudo e revisões que cabem no tempo que você tem em cada dia da semana.
+- **Rotina por hora**: defina a hora de começo e quantas horas estuda em cada dia; a missão sai com horários (ex.: 19:00–19:50).
+- **Agenda da semana**: os próximos 7 dias já planejados, hora a hora.
+- **Missão do dia** e **estudo livre** (registre o que estudou fora do plano).
+- **Onboarding** de 30 segundos no primeiro uso.
+- **Instalável no celular** (PWA) e funciona offline.
 - **Replanejamento automático**: se você falhar um dia, nada acumula. A fila se reorganiza.
 - **Modo foco** com cronômetro, **sequência de dias**, **revisão espaçada** (1, 7 e 30 dias) e **desempenho por assunto**.
 - **TecConcursos (link direcionado)**: cada assunto abre o seu caderno de questões no Tec. Você resolve lá e registra os acertos aqui.
@@ -32,7 +36,7 @@ Cada assunto recebe uma nota a partir de:
 
 ## Como usar
 
-Abra o `index.html` no navegador. Também dá para publicar no GitHub Pages e instalar no celular.
+Acesse **https://rhuankj.github.io/EstudosTech-/** e, no celular, use "Adicionar à tela inicial". Também funciona abrindo o `index.html` direto.
 Os dados ficam só no navegador. Use **Ajustes → Exportar backup** de vez em quando.
 
 Para a IA, crie uma chave em https://console.anthropic.com e cole em **Ajustes → IA**.

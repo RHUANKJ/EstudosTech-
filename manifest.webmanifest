@@ -1,0 +1,12 @@
+{
+  "name": "posse. — do edital à posse",
+  "short_name": "posse",
+  "description": "Rotina de estudos direcionada para concursos.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0d16",
+  "theme_color": "#4f46e5",
+  "lang": "pt-BR",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
