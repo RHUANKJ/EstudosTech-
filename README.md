@@ -53,11 +53,11 @@ Se quiser mais qualidade, dá para trocar para o **Claude (Anthropic)**, que é 
 
 ### Biblioteca e servidor local
 
-Abra o `index.html` desta pasta para ler a biblioteca pessoal, ou execute `node server.cjs` com Node.js 22 ou superior e acesse **http://127.0.0.1:8787**. O servidor aceita conexões apenas na máquina local.
+A biblioteca de PMPE Soldado funciona no GitHub Pages e ao abrir o `index.html` desta pasta. Para rodar o servidor local, execute `node server.cjs` com Node.js 22 ou superior e acesse **http://127.0.0.1:8787**. O servidor aceita conexões apenas na máquina local.
 
 Para usar o Claude pelo servidor, defina `ANTHROPIC_API_KEY` em um arquivo `.env` ao lado de `server.cjs`, execute `node --env-file=.env server.cjs` e selecione Claude em **Ajustes → IA**.
 
-Os PDFs e o catálogo de trechos ficam em `biblioteca-local/`, ignorada pelo Git. O backup do progresso não inclui essa pasta. Para mudar do GitHub Pages para a versão local, exporte o backup no endereço antigo e importe no novo.
+Os PDFs e o catálogo de trechos ficam em `biblioteca-local/`. O backup do progresso guarda os registros de estudo separadamente. Para mudar de endereço, exporte o backup no endereço antigo e importe no novo.
 
 ## Integração com o TecConcursos
 

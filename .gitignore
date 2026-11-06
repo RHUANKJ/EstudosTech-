@@ -1,4 +1,6 @@
 .claude/
 node_modules/
 .env
-/biblioteca-local/
+/biblioteca-local/*
+!/biblioteca-local/*.pdf
+!/biblioteca-local/catalogo.js
