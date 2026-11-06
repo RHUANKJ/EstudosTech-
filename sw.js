@@ -1,5 +1,5 @@
 // posse. — service worker: app offline (cache do próprio app; API e sites externos passam direto)
-const CACHE = 'posse-v3';
+const CACHE = 'posse-v4';
 const ARQS = ['./', 'index.html', 'editais.js', 'manifest.webmanifest', 'icon.svg'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQS))); self.skipWaiting(); });
 self.addEventListener('activate', e => {

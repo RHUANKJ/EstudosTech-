@@ -99,6 +99,10 @@ td.num,th.num{text-align:right}
 @keyframes s{to{transform:rotate(360deg)}}
 .res{font-size:13px}.res li{margin:3px 0}
 a{color:var(--accent)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px;border-radius:12px;text-align:left}
+.seg button span{font-size:12px;color:var(--muted)}.seg button.on{border-color:var(--accent);background:var(--soft)}
+@media (max-width:520px){.seg{grid-template-columns:1fr}}
 /* ---------- Horários, agenda, onboarding ---------- */
 .item .hora{flex:none;width:46px;font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:700;color:var(--accent);padding-top:2px;display:flex;flex-direction:column}
 .item .hora span{font-size:11px;font-weight:500;color:var(--muted)}
@@ -234,12 +238,14 @@ function edDePreset(p){
 /* ===================== Estado ===================== */
 function novoEstado(){
   return{v:2,rotina:{horas:[0,120,120,120,120,120,180],inicio:['09:00','19:00','19:00','19:00','19:00','19:00','09:00'],pausa:10,bloco:50,qMeta:15},
-    editais:[],ativo:null,sessoes:[],revisoes:[],missoes:{},ia:{key:'',model:'claude-opus-5-5'},chat:[]};
+    editais:[],ativo:null,sessoes:[],revisoes:[],missoes:{},ia:{prov:'gemini',key:'',model:'claude-opus-5-5',gkey:'',gmodel:'',gmodels:[]},chat:[]};
 }
 let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!S||S.v!==2)S=novoEstado();
 if(!S.rotina.inicio)S.rotina.inicio=['09:00','19:00','19:00','19:00','19:00','19:00','09:00'];
 if(S.rotina.pausa==null)S.rotina.pausa=10;
+S.ia={prov:S.ia?.key?'claude':'gemini',key:'',model:'claude-opus-5-5',gkey:'',gmodel:'',gmodels:[],...S.ia};
+const iaOn=()=>S.ia.prov==='gemini'?!!(S.ia.gkey&&S.ia.gmodel):!!S.ia.key;
 function salvar(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){alert('Não consegui salvar no navegador. Exporte um backup em Ajustes.')}}
 const E=()=>S.editais.find(e=>e.id===S.ativo)||null;
 const assuntosDe=e=>e?e.disciplinas.flatMap(d=>d.assuntos.map(a=>({...a,disc:d}))):[];
@@ -348,7 +354,45 @@ function tecCopy(id){
 
 /* ===================== IA (Claude API) ===================== */
 const API='https://api.anthropic.com/v1/messages';
-async function claude({system,content,web=false,maxTokens=16000,historico}){
+/* ---------- Google Gemini (camada gratuita) ---------- */
+const GAPI='https://generativelanguage.googleapis.com/v1beta';
+async function geminiModelos(key){
+  const r=await fetch(`${GAPI}/models?pageSize=200`,{headers:{'x-goog-api-key':key}});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j?.error?.message||`Erro ${r.status}`);
+  return(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent'))
+    .map(m=>m.name.replace('models/',''))
+    .filter(n=>/gemini/.test(n)&&!/(image|tts|audio|live|embedding|vision|thinking-exp)/.test(n));
+}
+function melhorModelo(lista){
+  // prefere "flash" estável (sem preview/exp) e a versão mais nova
+  const v=n=>parseFloat((n.match(/gemini-(\d+(\.\d+)?)/)||[])[1]||0);
+  const score=n=>v(n)*10+(/flash/.test(n)?5:0)-(/lite/.test(n)?2:0)-(/(preview|exp)/.test(n)?3:0)-(/latest/.test(n)?1:0);
+  return[...lista].sort((a,b)=>score(b)-score(a))[0]||'';
+}
+function paraGemini(c){
+  const arr=typeof c==='string'?[{type:'text',text:c}]:c;
+  return arr.map(b=>b.type==='document'?{inline_data:{mime_type:b.source.media_type,data:b.source.data}}:{text:b.text});
+}
+async function gemini({system,content,web,maxTokens,historico}){
+  if(!S.ia.gkey||!S.ia.gmodel)throw new Error('Configure o Gemini em Ajustes → IA.');
+  const msgs=historico?historico.map(m=>({role:m.role==='assistant'?'model':'user',parts:paraGemini(m.content)})):[{role:'user',parts:paraGemini(content)}];
+  const body={systemInstruction:{parts:[{text:system}]},contents:msgs,generationConfig:{maxOutputTokens:Math.min(maxTokens,65536)}};
+  if(web)body.tools=[{google_search:{}}];
+  const r=await fetch(`${GAPI}/models/${encodeURIComponent(S.ia.gmodel)}:generateContent`,{method:'POST',
+    headers:{'content-type':'application/json','x-goog-api-key':S.ia.gkey},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===429)throw new Error('Limite gratuito do Gemini atingido. Espere um minuto (ou até amanhã) e tente de novo.');
+  if(!r.ok)throw new Error(j?.error?.message||`Erro ${r.status} no Gemini`);
+  const cand=j.candidates?.[0];
+  if(!cand?.content)throw new Error(j.promptFeedback?.blockReason?'O Gemini bloqueou este pedido.':'O Gemini não respondeu. Tente de novo.');
+  const texto=(cand.content.parts||[]).map(p=>p.text||'').join('');
+  const fontes=(cand.groundingMetadata?.groundingChunks||[]).filter(g=>g.web).map(g=>({titulo:g.web.title,url:g.web.uri}));
+  return{texto,fontes};
+}
+async function claude(args){
+  if(S.ia.prov==='gemini')return gemini({maxTokens:16000,...args});
+  const{system,content,web=false,maxTokens=16000,historico}=args;
   if(!S.ia.key)throw new Error('Configure sua chave da API em Ajustes → IA.');
   const messages=historico?[...historico]:[{role:'user',content}];
   const body={model:S.ia.model||'claude-opus-5-5',max_tokens:maxTokens,system,messages,
@@ -645,24 +689,24 @@ function vEditais(){
 function vIA(){
   const e=E();
   let h=`<div class="hero"><h1>IA de direcionamento <span class="tag ia">beta</span></h1><p>Lê editais, analisa provas anteriores e pesquisa o que a banca mais cobra.</p></div>`;
-  if(!S.ia.key)h+=`<div class="notice">Para usar a IA, coloque sua chave da API da Anthropic em <a href="#" data-tab-go="ajustes">Ajustes → IA</a>. Ela fica salva só neste navegador.</div>`;
+  if(!iaOn())h+=`<div class="notice">Para usar a IA, configure em <a href="#" data-tab-go="ajustes">Ajustes → IA</a>. Recomendado: <b>Google Gemini, grátis</b>.</div>`;
   const busy=t=>iaBusy===t?`<p class="hint"><span class="spin"></span>Trabalhando… isso pode levar alguns minutos.</p>`:'';
   h+=resultadoIA();
   h+=`<div class="card"><h2>1 · Ler um edital novo</h2><p class="hint" style="margin-top:0">Envie o PDF (ou cole o texto). A IA monta disciplinas, pesos e assuntos e cria o edital no app.</p>
     <label>PDF do edital</label><input type="file" id="fEdital" accept=".pdf,.txt">
     <label>Cargo (se o edital tiver vários)</label><input id="cEdital" placeholder="ex.: Soldado">
     <label>…ou cole o conteúdo programático</label><textarea id="tEdital"></textarea>
-    <div class="btns"><button class="pri" data-act="iaEdital" ${iaBusy||!S.ia.key?'disabled':''}>Ler edital</button></div>${busy('edital')}</div>`;
+    <div class="btns"><button class="pri" data-act="iaEdital" ${iaBusy||!iaOn()?'disabled':''}>Ler edital</button></div>${busy('edital')}</div>`;
   if(e){
     h+=`<div class="card"><h2>2 · Raio-X de provas anteriores</h2><p class="hint" style="margin-top:0">Envie PDFs de provas passadas de <b>${esc(e.nome)}</b> (ou da mesma banca). A IA classifica cada questão nos assuntos do edital e soma a <b>incidência real</b>.</p>
       <input type="file" id="fProva" accept=".pdf,.txt" multiple>
       ${e.provas?.length?`<p class="hint">Já analisadas: ${e.provas.map(p=>esc(p.nome)).join(', ')}. Não envie a mesma prova duas vezes.</p>`:''}
-      <div class="btns"><button class="pri" data-act="iaProva" ${iaBusy||!S.ia.key?'disabled':''}>Analisar provas</button></div>${busy('prova')}</div>
+      <div class="btns"><button class="pri" data-act="iaProva" ${iaBusy||!iaOn()?'disabled':''}>Analisar provas</button></div>${busy('prova')}</div>
     <div class="card"><h2>3 · Pesquisar histórico na web</h2><p class="hint" style="margin-top:0">A IA pesquisa provas e levantamentos de incidência de <b>${esc(e.banca||'banca')}</b> para <b>${esc(e.cargo||e.nome)}</b> e estima a relevância de cada assunto e os temas mais cobrados, com as fontes.</p>
-      <div class="btns"><button class="pri" data-act="iaWeb" ${iaBusy||!S.ia.key?'disabled':''}>Pesquisar</button></div>${busy('web')}</div>
+      <div class="btns"><button class="pri" data-act="iaWeb" ${iaBusy||!iaOn()?'disabled':''}>Pesquisar</button></div>${busy('web')}</div>
     <div class="card"><h2>4 · Mentor</h2><p class="hint" style="margin-top:0">Pergunte qualquer coisa: o que estudar esta semana, como voltar à rotina, como atacar um assunto.</p>
       <div class="chat">${S.chat.slice(-20).map(m=>`<div class="msg ${m.role==='user'?'u':'a'}">${esc(m.content)}</div>`).join('')}${iaBusy==='mentor'?'<div class="msg a"><span class="spin"></span>pensando…</div>':''}</div>
-      <div style="display:flex;gap:6px"><input id="mIn" placeholder="Ex.: perdi 3 dias, como retomo?" ${!S.ia.key?'disabled':''}><button class="pri" data-act="mentor" ${iaBusy||!S.ia.key?'disabled':''}>Enviar</button></div>
+      <div style="display:flex;gap:6px"><input id="mIn" placeholder="Ex.: perdi 3 dias, como retomo?" ${!iaOn()?'disabled':''}><button class="pri" data-act="mentor" ${iaBusy||!iaOn()?'disabled':''}>Enviar</button></div>
       ${S.chat.length?'<div class="btns"><button class="ghost" data-act="limparChat">Limpar conversa</button></div>':''}</div>`;
   }
   return h;
@@ -729,12 +773,21 @@ function vAjustes(){
   <div><label>Pausa entre blocos</label><select data-r="pausa">${[0,5,10,15,20].map(v=>`<option value="${v}" ${+c.pausa===v?'selected':''}>${v} min</option>`).join('')}</select></div></div>
   <div class="row"><div><label>Meta de questões por bloco</label><input type="number" min="0" data-r="qMeta" value="${c.qMeta}"></div><div></div></div>
   <div class="btns" style="margin-top:12px"><button class="pri" data-act="applyCfg">Salvar e refazer missão de hoje</button></div></div>
-  <div class="card"><h2>IA</h2>
+  <div class="card"><div class="card-h"><h2>IA</h2>${iaOn()?'<span class="tag">conectada</span>':''}</div>
+  <label>Provedor</label><div class="seg">
+    <button data-act="prov" data-p="gemini" class="${S.ia.prov==='gemini'?'on':''}"><b>Google Gemini</b><span>grátis · com limite diário</span></button>
+    <button data-act="prov" data-p="claude" class="${S.ia.prov==='claude'?'on':''}"><b>Claude (Anthropic)</b><span>pago · centavos por análise</span></button></div>
+  ${S.ia.prov==='gemini'?`
+  <ol class="hint" style="padding-left:18px;margin:12px 0 0"><li>Entre em <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> com sua conta Google.</li><li>Clique em <b>Create API key</b> e copie a chave.</li><li>Cole abaixo e clique em <b>Conectar</b>.</li></ol>
+  <label>Chave do Gemini</label><input type="password" id="gKey" value="${esc(S.ia.gkey)}" placeholder="AIza…" autocomplete="off">
+  ${S.ia.gmodels.length?`<label>Modelo</label><select id="gModel">${S.ia.gmodels.map(m=>`<option ${m===S.ia.gmodel?'selected':''}>${esc(m)}</option>`).join('')}</select>`:''}
+  <p class="hint">Na camada grátis há limite de pedidos por minuto e por dia, e o Google pode usar o conteúdo enviado para melhorar os produtos dele. Não envie dados pessoais.</p>
+  <div class="btns"><button class="pri" data-act="saveGemini">${S.ia.gmodels.length?'Salvar':'Conectar'}</button></div></div>`:`
   <label>Chave da API da Anthropic</label><input type="password" id="iaKey" value="${esc(S.ia.key)}" placeholder="sk-ant-…" autocomplete="off">
   <label>Modelo</label><select id="iaModel">
     ${[['claude-opus-5-5','Claude Opus 5.5 (melhor qualidade)'],['claude-sonnet-5-5','Claude Sonnet 5.5 (mais barato)'],['claude-haiku-5-5','Claude Haiku 5.5 (mais rápido)']].map(([v,l])=>`<option value="${v}" ${S.ia.model===v?'selected':''}>${l}</option>`).join('')}</select>
   <p class="hint">Crie a chave em console.anthropic.com. Ela fica salva só neste navegador e vai direto para a API da Anthropic. Cada análise custa centavos; pesquisas na web custam um pouco mais.</p>
-  <div class="btns"><button class="pri" data-act="saveIA">Salvar</button></div></div>
+  <div class="btns"><button class="pri" data-act="saveIA">Salvar</button></div></div>`}
   <div class="card"><h2>Backup</h2><p class="hint" style="margin-top:0">Os dados ficam só neste navegador. Exporte de vez em quando (a chave da API não vai no backup).</p>
   <div class="btns"><button data-act="export">Exportar backup</button><button data-act="import">Importar backup</button>
   <button class="ghost" data-act="reset" style="color:var(--bad)">Apagar tudo</button></div>
@@ -828,11 +881,22 @@ document.addEventListener('click',ev=>{
     delAss:()=>{e.disciplinas.forEach(d=>d.assuntos=d.assuntos.filter(a=>a.id!==b.dataset.a));refazerHoje();salvar();render()},
     importCsv:()=>importarCsv($('#csv').value),
     applyCfg:()=>{refazerHoje();salvar();tab='hoje';render()},
+    prov:()=>{S.ia.prov=b.dataset.p;salvar();render()},
+    saveGemini:async()=>{
+      const k=$('#gKey').value.trim();if(!k)return toast('Cole a chave do Gemini.');
+      const sel=$('#gModel');
+      if(sel&&k===S.ia.gkey){S.ia.gmodel=sel.value;salvar();render();return toast('Modelo salvo.')}
+      b.disabled=true;b.textContent='Conectando…';
+      try{const ms=await geminiModelos(k);if(!ms.length)throw new Error('Nenhum modelo Gemini disponível para esta chave.');
+        S.ia.gkey=k;S.ia.gmodels=ms;S.ia.gmodel=ms.includes(S.ia.gmodel)?S.ia.gmodel:melhorModelo(ms);salvar();render();
+        toast(`Gemini conectado. Modelo: ${S.ia.gmodel}. A IA já pode ser usada.`)}
+      catch(err){b.disabled=false;b.textContent='Conectar';toast('Não consegui conectar: '+err.message)}
+    },
     saveIA:()=>{S.ia.key=$('#iaKey').value.trim();S.ia.model=$('#iaModel').value;salvar();toast('Configuração da IA salva.')},
     iaEdital,iaProva,iaWeb,mentor,aplicarIA,
     descartarIA:()=>{iaRes=null;render()},
     limparChat:()=>{S.chat=[];salvar();render()},
-    export:()=>{const c={...S,ia:{...S.ia,key:''}};const u=URL.createObjectURL(new Blob([JSON.stringify(c,null,1)],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download=`posse-backup-${hoje()}.json`;a.click();URL.revokeObjectURL(u)},
+    export:()=>{const c={...S,ia:{...S.ia,key:'',gkey:''}};const u=URL.createObjectURL(new Blob([JSON.stringify(c,null,1)],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download=`posse-backup-${hoje()}.json`;a.click();URL.revokeObjectURL(u)},
     import:()=>$('#fileIn').click(),
     reset:()=>{if(confirm('Apagar todos os dados? Exporte um backup antes.')){S=novoEstado();salvar();render()}}
   };
@@ -842,7 +906,7 @@ document.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.id==='mI
 $('#modal').onclick=ev=>{if(ev.target.id==='modal')fecharModal()};
 document.addEventListener('change',ev=>{
   const t=ev.target,e=E();
-  if(t.id==='fileIn'&&t.files[0]){t.files[0].text().then(x=>{try{const o=JSON.parse(x);if(o.v!==2||!o.editais)throw 0;o.ia={...o.ia,key:S.ia.key};S=o;salvar();render();toast('Backup importado.')}catch(_){toast('Arquivo inválido.')}});return}
+  if(t.id==='fileIn'&&t.files[0]){t.files[0].text().then(x=>{try{const o=JSON.parse(x);if(o.v!==2||!o.editais)throw 0;o.ia={...S.ia};S=o;salvar();render();toast('Backup importado.')}catch(_){toast('Arquivo inválido.')}});return}
   if(t.id==='edSel'){S.ativo=t.value;salvar();render();return}
   if(t.dataset.r){S.rotina[t.dataset.r]=+t.value||0;refazerHoje();salvar();render();return}
   if(t.dataset.h!==undefined){S.rotina.horas[+t.dataset.h]=Math.round(Math.max(0,Math.min(16,+String(t.value).replace(',','.')||0))*60);refazerHoje();salvar();render();return}

@@ -18,7 +18,7 @@ Você não decide o que estudar: o app monta a **missão do dia** com base no qu
 - **Replanejamento automático**: se você falhar um dia, nada acumula. A fila se reorganiza.
 - **Modo foco** com cronômetro, **sequência de dias**, **revisão espaçada** (1, 7 e 30 dias) e **desempenho por assunto**.
 - **TecConcursos (link direcionado)**: cada assunto abre o seu caderno de questões no Tec. Você resolve lá e registra os acertos aqui.
-- **IA de direcionamento** (Claude, da Anthropic):
+- **IA de direcionamento** (Google Gemini grátis ou Claude):
   1. **Ler edital**: envie o PDF e ela monta disciplinas, pesos e assuntos.
   2. **Raio-X de provas anteriores**: envie PDFs de provas e ela classifica cada questão por assunto, gerando a incidência real.
   3. **Pesquisa na web**: estima a relevância de cada assunto e os temas mais cobrados pela banca, com fontes.
@@ -39,8 +39,13 @@ Cada assunto recebe uma nota a partir de:
 Acesse **https://rhuankj.github.io/EstudosTech-/** e, no celular, use "Adicionar à tela inicial". Também funciona abrindo o `index.html` direto.
 Os dados ficam só no navegador. Use **Ajustes → Exportar backup** de vez em quando.
 
-Para a IA, crie uma chave em https://console.anthropic.com e cole em **Ajustes → IA**.
-A chave fica salva apenas no seu navegador e não vai para o backup nem para o repositório.
+### IA: grátis com o Google Gemini
+
+1. Entre em https://aistudio.google.com/apikey com sua conta Google e clique em **Create API key**.
+2. No app, vá em **Ajustes → IA → Google Gemini**, cole a chave e clique em **Conectar**. O app detecta sozinho os modelos liberados para a sua chave.
+
+A camada gratuita tem limite de pedidos por minuto e por dia, e o Google pode usar o conteúdo enviado para melhorar os produtos dele.
+Se quiser mais qualidade, dá para trocar para o **Claude (Anthropic)**, que é pago: crie a chave em https://console.anthropic.com. As chaves ficam só no seu navegador e não vão para o backup.
 
 > Este modo, com a chave no navegador, serve para **uso pessoal**. Para abrir o app para outras pessoas, a IA precisa passar por um backend que guarde a chave no servidor.
 
