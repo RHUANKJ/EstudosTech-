@@ -172,6 +172,22 @@ nav button.on{background:var(--soft);color:var(--accent)}
   .content .wrap{padding:0 16px}
   main{padding-bottom:110px}
 }
+.reader{text-align:left}
+.reader section+section{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.reader p{white-space:pre-line;margin:8px 0 0}
+.reader .small{white-space:normal}
+.reader details{margin-top:8px}
+.reader summary,.library summary{cursor:pointer;color:var(--accent);font-weight:600}
+.reader summary{padding:5px 0}
+.reader .page-text{white-space:pre-line;padding:0 0 12px 12px;border-left:2px solid var(--line)}
+.library-list{list-style:none;padding:0;margin:12px 0 0}
+.library-list li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.library-list li :first-child{min-width:0;overflow-wrap:anywhere}
+.focus:has(.focus-reader:not([hidden])){justify-content:flex-start;overflow:auto;gap:8px;padding-block:20px}
+.focus-session{flex:none;display:flex;flex-direction:column;align-items:center;gap:8px}
+.focus-reader{width:min(100%,720px);flex:1;min-height:140px;overflow:auto;margin:8px 0 0}
+.focus:has(.focus-reader:not([hidden])) .clock{font-size:clamp(46px,10vw,72px);line-height:1.1}
+.modal:has(.reader) .card{max-width:720px}
 </style>
 </head>
 <body>
@@ -184,8 +200,9 @@ nav button.on{background:var(--soft);color:var(--accent)}
     <button data-tab="hoje" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Painel</span></button>
     <button data-tab="editais"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span>Editais</span></button>
     <button data-tab="agenda"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Agenda</span></button>
+    <button data-tab="materiais"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h5a3 3 0 0 1 3 3v12a3 3 0 0 0-3-3H4zM20 5h-5a3 3 0 0 0-3 3v12a3 3 0 0 1 3-3h5z"/></svg><span>Materiais</span></button>
     <button data-tab="ia"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg><span>IA</span></button>
-    <button data-tab="desempenho"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Desempenho</span></button>
+    <button data-tab="desempenho"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Progresso</span></button>
     <button data-tab="ajustes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Ajustes</span></button>
   </nav>
   <div class="side-foot" id="sideFoot"></div>
@@ -199,16 +216,20 @@ nav button.on{background:var(--soft);color:var(--accent)}
 </div>
 </div>
 
-<div class="modal" id="modal"><div class="card" id="modalBody"></div></div>
+<div class="modal" id="modal"><div class="card" id="modalBody" role="dialog" aria-modal="true" aria-label="Posse" tabindex="-1"></div></div>
 <div class="focus" id="focus">
+  <div class="focus-session">
   <div class="small" id="focusTag"></div>
   <h2 id="focusTitle" style="margin:0;font-size:22px"></h2>
   <div class="clock" id="clock">00:00</div>
   <div class="btns"><button id="fPause">Pausar</button><button class="pri" id="fDone">Concluir</button><button class="ghost" id="fExit">Sair</button></div>
   <div class="small">Celular longe. Uma coisa só. No fim, registre o que fez.</div>
+  </div>
+  <section class="card focus-reader" id="focusReader" hidden aria-label="Material do bloco"></section>
 </div>
 
 <script src="editais.js"></script>
+<script src="biblioteca-local/catalogo.js"></script>
 <script>
 /* ============================================================
    POSSE — do edital à posse
@@ -230,7 +251,7 @@ const PRESETS=window.POSSE_PRESETS||[];
 
 function novoAssunto(nome,incid=0){return{id:uid(),nome,incid:+incid||0,relev:null,temas:[],dominio:1,tecUrl:'',ultimoEstudo:null,questoes:0,acertos:0}}
 function edDePreset(p){
-  return{id:uid(),nome:p.nome,cargo:p.cargo||'',banca:p.banca||'',dataProva:p.dataProva||'',nota:p.nota||'',provas:(p.provas||[]).map(x=>({...x})),
+  return{id:uid(),preset:p.id,nome:p.nome,cargo:p.cargo||'',banca:p.banca||'',dataProva:p.dataProva||'',nota:p.nota||'',provas:(p.provas||[]).map(x=>({...x})),
     disciplinas:p.disciplinas.map(d=>({id:uid(),nome:d.nome,peso:+d.questoes||1,
       assuntos:d.assuntos.map(a=>typeof a==='string'?novoAssunto(a):Array.isArray(a)?novoAssunto(a[0],a[1]):novoAssunto(a.nome,a.incid))}))};
 }
@@ -245,12 +266,31 @@ if(!S||S.v!==2)S=novoEstado();
 if(!S.rotina.inicio)S.rotina.inicio=['09:00','19:00','19:00','19:00','19:00','19:00','09:00'];
 if(S.rotina.pausa==null)S.rotina.pausa=10;
 S.ia={prov:S.ia?.key?'claude':'gemini',key:'',model:'claude-opus-5-5',gkey:'',gmodel:'',gmodels:[],...S.ia};
-const iaOn=()=>S.ia.prov==='gemini'?!!(S.ia.gkey&&S.ia.gmodel):!!S.ia.key;
+const modoServidor=document.querySelector('meta[name="posse-server"]')?.content;
+const iaDisponivel=()=>modoServidor?modoServidor==='ready':Boolean(S.ia.key);
+const iaOn=()=>S.ia.prov==='gemini'?!!(S.ia.gkey&&S.ia.gmodel):iaDisponivel();
 function salvar(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){alert('Não consegui salvar no navegador. Exporte um backup em Ajustes.')}}
 const E=()=>S.editais.find(e=>e.id===S.ativo)||null;
 const assuntosDe=e=>e?e.disciplinas.flatMap(d=>d.assuntos.map(a=>({...a,disc:d}))):[];
 function acharAssunto(id){for(const e of S.editais)for(const d of e.disciplinas){const a=d.assuntos.find(x=>x.id===id);if(a)return{a,d,e}}return null}
 const mKey=d=>`${S.ativo}|${d}`;
+
+const MATERIAIS=window.POSSE_MATERIAIS||{trechos:[],arquivos:[]};
+const presetDoEdital=e=>e?.preset??PRESETS.find(p=>p.nome===e?.nome&&p.cargo===e?.cargo)?.id;
+const urlPdf=(nome,pagina)=>`biblioteca-local/${encodeURIComponent(nome)}${pagina?'#page='+pagina:''}`;
+
+function materialDoAssunto({a,d,e}){
+  const preset=presetDoEdital(e);
+  return MATERIAIS.trechos.filter(m=>m.preset===preset&&m.disciplina===d.nome&&m.assunto===a.nome);
+}
+
+function leitorMaterial({a,d},materiais,noFoco=false){
+  return `<div class="reader">${noFoco?'<h2>Material do bloco</h2>':`<div class="eyebrow">${esc(d.nome)}</div><h2>${esc(a.nome)}</h2>`}
+    ${materiais.map(m=>`<section>${m.titulo!==a.nome?`<h3>${esc(m.titulo)}</h3>`:''}<p class="small">${esc(m.pdf)} · ${m.inicio===m.fim?'p. '+m.inicio:'pp. '+m.inicio+'–'+m.fim} do PDF</p>
+      <p><a href="${esc(urlPdf(m.pdf,m.inicio))}" target="_blank" rel="noopener">Abrir PDF na página ${m.inicio} ↗</a></p>
+      ${m.paginas.map((p,i)=>`<details ${i===0?'open':''}><summary>Página ${p.numero}</summary><p class="page-text">${esc(p.texto||'Veja esta página no PDF original.')}</p></details>`).join('')}
+    </section>`).join('')}</div>`;
+}
 
 /* ===================== Motor de prioridade ===================== */
 function prioridades(){
@@ -281,29 +321,36 @@ function motivo(inc,lacuna,erro,a){
 }
 
 /* ===================== Missão do dia ===================== */
-function montarItens(data,manter=[],excluir=new Set(),exclRev=new Set()){
+const TEMPOS_RESGATE=[15,30,60];
+function montarItens(data,manter=[],excluir=new Set(),exclRev=new Set(),resgate=null){
   const dow=new Date(data+'T12:00:00').getDay();
-  let budget=(+S.rotina.horas[dow]||0)-manter.reduce((s,i)=>s+i.min,0);
+  let budget=resgate??((+S.rotina.horas[dow]||0)-manter.reduce((s,i)=>s+i.min,0));
+  const pausaResgate=resgate?(+S.rotina.pausa||0):0;
   const itens=[...manter];const usados=new Set([...manter.map(i=>i.assuntoId+i.tipo),...[...excluir].map(x=>x+'estudo')]);
   const ids=new Set(assuntosDe(E()).map(a=>a.id));
   let revBudget=Math.max(0,Math.round(budget*.4));
+  if(resgate)revBudget=Math.max(15,revBudget);
   for(const r of S.revisoes.filter(r=>!r.feita&&r.due<=data&&ids.has(r.assuntoId)).sort((a,b)=>a.due.localeCompare(b.due))){
     if(revBudget<15||budget<15)break;
     if(usados.has(r.assuntoId+'revisao')||exclRev.has(r.id))continue;
     itens.push({id:uid(),tipo:'revisao',assuntoId:r.assuntoId,revId:r.id,min:15,qtd:10,feito:false});
-    usados.add(r.assuntoId+'revisao');revBudget-=15;budget-=15;
+    usados.add(r.assuntoId+'revisao');revBudget-=15;budget-=15+pausaResgate;
   }
   const bloco=+S.rotina.bloco||50;
+  const qMeta=+S.rotina.qMeta||15;
   for(const a of prioridades()){
-    if(budget<Math.min(25,bloco))break;
+    if(budget<Math.min(resgate?15:25,bloco))break;
     if(usados.has(a.id+'estudo'))continue;
     const m=Math.min(bloco,budget);
-    itens.push({id:uid(),tipo:'estudo',assuntoId:a.id,min:m,qtd:+S.rotina.qMeta||15,feito:false,motivo:a.motivo});
-    usados.add(a.id+'estudo');budget-=m;
+    itens.push({id:uid(),tipo:'estudo',assuntoId:a.id,min:m,qtd:resgate?Math.ceil(qMeta*m/bloco):qMeta,feito:false,motivo:a.motivo});
+    usados.add(a.id+'estudo');budget-=m+pausaResgate;
   }
   return itens;
 }
-function gerarMissao(data,manter=[]){S.missoes[mKey(data)]={data,itens:montarItens(data,manter)};salvar();return S.missoes[mKey(data)]}
+function gerarMissao(data,manter=[],resgate=null){
+  S.missoes[mKey(data)]={data,itens:montarItens(data,manter,undefined,undefined,resgate),resgate};
+  salvar();return S.missoes[mKey(data)];
+}
 const hm=t=>{const[a,b]=String(t||'19:00').split(':').map(Number);return a*60+(b||0)};
 const fmtHM=m=>`${String(Math.floor(m/60)%24).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
 function horarios(itens,data){
@@ -321,7 +368,12 @@ function planoSemana(){
   return out;
 }
 const missaoHoje=()=>S.missoes[mKey(hoje())]||gerarMissao(hoje());
-function replanejar(){gerarMissao(hoje(),missaoHoje().itens.filter(i=>i.feito));render()}
+function replanejar(resgate=null){gerarMissao(hoje(),missaoHoje().itens.filter(i=>i.feito),resgate);render()}
+function abrirResgate(){
+  modal(`<h2>Modo resgate</h2><p>Quanto tempo você ainda tem hoje? Os blocos concluídos continuam na missão.</p>
+  <div class="btns">${TEMPOS_RESGATE.map(min=>`<button class="pri" data-act="resgate" data-min="${min}">${min} min</button>`).join('')}
+  <button class="ghost" data-act="close">Cancelar</button></div>`);
+}
 function refazerHoje(){delete S.missoes[mKey(hoje())];salvar()}
 function pendenciaOntem(){const m=S.missoes[mKey(addDias(hoje(),-1))];return m?m.itens.filter(i=>!i.feito).length:0}
 function streak(){const d0=new Set(S.sessoes.map(s=>s.data));let d=d0.has(hoje())?hoje():addDias(hoje(),-1),n=0;while(d0.has(d)){n++;d=addDias(d,-1)}return n}
@@ -393,22 +445,30 @@ async function gemini({system,content,web,maxTokens,historico}){
 async function claude(args){
   if(S.ia.prov==='gemini')return gemini({maxTokens:16000,...args});
   const{system,content,web=false,maxTokens=16000,historico}=args;
-  if(!S.ia.key)throw new Error('Configure sua chave da API em Ajustes → IA.');
+  if(!iaDisponivel())throw new Error(modoServidor?'Configure ANTHROPIC_API_KEY no servidor.':'Configure sua chave da API em Ajustes → IA.');
   const messages=historico?[...historico]:[{role:'user',content}];
-  const body={model:S.ia.model||'claude-opus-5-5',max_tokens:maxTokens,system,messages,
-    output_config:{effort:'medium'},fallbacks:'default'};
-  if(web)body.tools=[{type:'web_search_20260209',name:'web_search',max_uses:10}];
+  const payload={model:S.ia.model||'claude-opus-5-5',max_tokens:maxTokens,system,messages};
+  const headers={'content-type':'application/json'};
+  let body={...payload,web};
+  if(!modoServidor){
+    Object.assign(headers,{'x-api-key':S.ia.key,'anthropic-version':'2026-10-21','anthropic-dangerous-direct-browser-access':'true'});
+    body={...payload,output_config:{effort:'medium'}};
+    if(payload.model!=='claude-haiku-5-5'){
+      headers['anthropic-beta']='server-side-fallback-2026-07-01';
+      body.fallbacks='default';
+    }
+    if(web)body.tools=[{type:'web_search_20260209',name:'web_search',max_uses:10}];
+  }
   for(let i=0;i<6;i++){
-    const r=await fetch(API,{method:'POST',headers:{
-      'content-type':'application/json','x-api-key':S.ia.key,'anthropic-version':'2026-10-21',
-      'anthropic-beta':'server-side-fallback-2026-07-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify(body)});
+    const r=await fetch(modoServidor?'/api/claude':API,{method:'POST',headers,body:JSON.stringify(body)});
     const j=await r.json().catch(()=>({}));
     if(!r.ok)throw new Error(j?.error?.message||`Erro ${r.status} na API`);
     if(j.stop_reason==='refusal')throw new Error('A IA recusou este pedido. Tente reformular.');
+    if(j.stop_reason==='max_tokens')throw new Error('A resposta ficou incompleta. Tente com menos conteúdo.');
+    if(!Array.isArray(j.content))throw new Error('O Claude retornou uma resposta inesperada.');
     if(j.stop_reason==='pause_turn'){messages.push({role:'assistant',content:j.content});continue}
     const texto=j.content.filter(b=>b.type==='text').map(b=>b.text).join('');
-    const fontes=[];j.content.forEach(b=>{if(b.type==='web_search_tool_result'&&Array.isArray(b.content))b.content.forEach(x=>x.url&&fontes.push({titulo:x.title,url:x.url}))});
+    const fontes=[];j.content.forEach(b=>{if(b.type==='web_search_tool_result'&&Array.isArray(b.content))b.content.forEach(x=>{if(/^https?:\/\//i.test(x.url))fontes.push({titulo:x.title,url:x.url})})});
     return{texto,fontes,content:j.content};
   }
   throw new Error('A pesquisa demorou demais. Tente de novo.');
@@ -434,10 +494,11 @@ async function iaRodar(tipo,fn){
 // 1) Ler edital (PDF/texto) e criar um edital novo
 function iaEdital(){
   const f=document.getElementById('fEdital').files[0],txt=document.getElementById('tEdital').value.trim();
+  const cargo=document.getElementById('cEdital').value.trim()||'principal';
   if(!f&&!txt)return toast('Envie o PDF do edital ou cole o texto.');
   iaRodar('edital',async()=>{
     const content=[];if(f)content.push(await blocoArquivo(f));if(txt)content.push({type:'text',text:txt});
-    content.push({type:'text',text:`Extraia deste edital de concurso a estrutura da prova objetiva para o cargo ${document.getElementById('cEdital').value||'principal'}.
+    content.push({type:'text',text:`Extraia deste edital de concurso a estrutura da prova objetiva para o cargo ${cargo}.
 Responda só com um bloco \`\`\`json no formato:
 {"nome":"órgão/concurso curto","cargo":"","banca":"","dataProva":"AAAA-MM-DD ou vazio","disciplinas":[{"nome":"","questoes":0,"assuntos":["assunto curto (até 8 palavras)"]}]}
 Condense o conteúdo programático em assuntos curtos e estudáveis, sem perder nenhum. Se algo não estiver no edital, deixe vazio.`});
@@ -527,8 +588,10 @@ function render(){
   if(n!=null){cd.textContent=n>=0?`${n} dias`:'prova feita';cd.style.display=''}else cd.style.display='none';
   $('#sideFoot').innerHTML=(S.editais.length>1?`<label style="margin:0 4px">Estudando</label><select id="edSel">${S.editais.map(x=>`<option value="${x.id}" ${x.id===S.ativo?'selected':''}>${esc(x.nome+' · '+x.cargo)}</option>`).join('')}</select>`:'')+
     (n!=null&&n>=0?`<div class="cd-card"><small>Faltam</small><b>${n} dias</b><small>prova em ${e.dataProva.split('-').reverse().join('/')}</small></div>`:'');
+  const navMat=document.querySelector('[data-tab=materiais]');if(navMat)navMat.style.display=MATERIAIS.arquivos.length?'':'none';
+  if(tab==='materiais'&&!MATERIAIS.arquivos.length)tab='hoje';
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
-  $('#main').innerHTML=(!e&&!['editais','ajustes','ia'].includes(tab))?vSemEdital():{hoje:vHoje,agenda:vAgenda,editais:vEditais,ia:vIA,desempenho:vDesempenho,ajustes:vAjustes}[tab]();
+  $('#main').innerHTML=(!e&&!['editais','ajustes','ia','materiais'].includes(tab))?vSemEdital():{hoje:vHoje,agenda:vAgenda,editais:vEditais,materiais:vMateriais,ia:vIA,desempenho:vDesempenho,ajustes:vAjustes}[tab]();
   if(tab==='ia'){const c=$('.chat');if(c)c.scrollTop=c.scrollHeight}
 }
 function vSemEdital(){
@@ -585,17 +648,20 @@ function vHoje(){
   if(!tot)L+=`<div class="empty">Sem tempo de estudo configurado para hoje.<br><button style="margin-top:8px" data-tab-go="ajustes">Ajustar rotina</button></div>`;
   const hs=horarios(m.itens,h0);
   m.itens.forEach((it,ix)=>{
-    const r=acharAssunto(it.assuntoId);if(!r)return;const rev=it.tipo==='revisao';
+    const r=acharAssunto(it.assuntoId);if(!r)return;const rev=it.tipo==='revisao',temMaterial=materialDoAssunto(r).length>0;
     L+=`<div class="item ${it.feito?'done':''}"><div class="hora">${hs[ix].ini}<span>${hs[ix].fim}</span></div>
       <div class="body">
         <div><span class="tag ${rev?'rev':''}">${rev?'Revisão':'Estudo'}</span><span class="small">${esc(r.d.nome)}</span></div>
         <div class="t">${esc(r.a.nome)}</div>
         <div class="d">${it.min} min · ${rev?`${it.qtd} questões de revisão`:`teoria + ${it.qtd} questões`}${it.motivo?` · <i>${esc(it.motivo)}</i>`:''}</div>
         ${r.a.temas?.length?`<div class="temas"><b>Mais cobrado:</b> ${r.a.temas.map(esc).join(' · ')}</div>`:''}
-        ${it.feito?'':`<div class="btns"><button class="pri" data-act="focus" data-id="${it.id}">▶ Começar foco</button>${tecBotao(r.a)}</div>`}
+        ${!it.feito||temMaterial?`<div class="btns">${it.feito?'':`<button class="pri" data-act="focus" data-id="${esc(it.id)}">▶ Começar foco</button>`}${temMaterial?`<button data-act="material" data-id="${esc(it.assuntoId)}">Ler material</button>`:''}${it.feito?'':tecBotao(r.a)}</div>`:''}
       </div><button class="check" title="Marcar como feito" data-act="log" data-id="${it.id}" ${it.feito?'disabled':''}></button></div>`;
   });
-  L+=`<div class="btns" style="margin-top:12px"><button data-act="livre">＋ Estudo livre</button><button class="ghost" data-act="replan">↻ Replanejar o resto do dia</button></div></div>`;
+  L+=`${m.resgate?`<p class="hint">Modo resgate · ${esc(m.resgate)} min escolhidos</p>`:''}
+    <div class="btns" style="margin-top:12px"><button data-act="livre">＋ Estudo livre</button>
+    <button data-act="abrirResgate">${m.resgate?'Alterar tempo':'Modo resgate'}</button>
+    <button class="ghost" data-act="replan">${m.resgate?'Voltar à rotina':'↻ Replanejar o resto do dia'}</button></div></div>`;
   // ---- semana (barras)
   const dn=['D','S','T','Q','Q','S','S'];
   const dias=[...Array(7)].map((_,i)=>addDias(h0,i-6));
@@ -624,6 +690,20 @@ function vHoje(){
   let cells='';for(let i=0;i<84;i++){const d=addDias(start,i);if(d>h0){cells+='<i style="opacity:0"></i>';continue}const mm=minEm(d);const o=mm?Math.min(1,.25+mm/120):0;cells+=`<i title="${d.split('-').reverse().join('/')}: ${fmtH(mm)}" style="${o?`background:var(--accent);opacity:${o.toFixed(2)}`:''}"></i>`}
   R+=`<div class="card"><div class="card-h"><h2>Constância</h2><span class="sub">12 semanas</span></div><div class="heat">${cells}</div></div>`;
   return h+`<div class="dash"><div>${L}</div><div>${R}</div></div>`;
+}
+
+function vMateriais(){
+  const e=E();
+  let h=`<div class="hero"><h1>Materiais</h1><p>Trechos por assunto e PDFs originais.</p></div>`;
+  if(presetDoEdital(e)==='pmpe-soldado'&&MATERIAIS.trechos.length){
+    h+=`<div class="library">${e.disciplinas.map(d=>{
+      const itens=d.assuntos.map(a=>({a,n:materialDoAssunto({a,d,e}).length}));
+      return `<details class="card"><summary>${esc(d.nome)} · ${itens.filter(i=>i.n).length}/${itens.length} com material</summary>
+        <ul class="library-list">${itens.map(({a,n})=>`<li><span>${esc(a.nome)}</span>${n?`<button data-act="material" data-id="${esc(a.id)}">Ler</button>`:'<span class="small">Sem trecho vinculado</span>'}</li>`).join('')}</ul></details>`;
+    }).join('')}</div>`;
+  }
+  if(!MATERIAIS.arquivos.length)return h+'<div class="card"><p class="hint">Nenhuma biblioteca local encontrada.</p></div>';
+  return h+`<div class="card"><h2>PDFs da PMPE Soldado</h2><ul class="library-list">${MATERIAIS.arquivos.map(f=>`<li><span>${esc(f.nome)} <span class="small">· ${f.paginas} ${f.paginas===1?'página':'páginas'}</span></span><a class="btn" href="${esc(urlPdf(f.nome))}" target="_blank" rel="noopener">Abrir PDF ↗</a></li>`).join('')}</ul></div>`;
 }
 
 function vAgenda(){
@@ -783,10 +863,10 @@ function vAjustes(){
   ${S.ia.gmodels.length?`<label>Modelo</label><select id="gModel">${S.ia.gmodels.map(m=>`<option ${m===S.ia.gmodel?'selected':''}>${esc(m)}</option>`).join('')}</select>`:''}
   <p class="hint">Na camada grátis há limite de pedidos por minuto e por dia, e o Google pode usar o conteúdo enviado para melhorar os produtos dele. Não envie dados pessoais.</p>
   <div class="btns"><button class="pri" data-act="saveGemini">${S.ia.gmodels.length?'Salvar':'Conectar'}</button></div></div>`:`
-  <label>Chave da API da Anthropic</label><input type="password" id="iaKey" value="${esc(S.ia.key)}" placeholder="sk-ant-…" autocomplete="off">
+  ${modoServidor?`<p class="hint">${iaDisponivel()?'Chave da Anthropic configurada no servidor.':'Configure ANTHROPIC_API_KEY e reinicie o servidor.'}</p>`:`<label>Chave da API da Anthropic</label><input type="password" id="iaKey" value="${esc(S.ia.key)}" placeholder="sk-ant-…" autocomplete="off">`}
   <label>Modelo</label><select id="iaModel">
     ${[['claude-opus-5-5','Claude Opus 5.5 (melhor qualidade)'],['claude-sonnet-5-5','Claude Sonnet 5.5 (mais barato)'],['claude-haiku-5-5','Claude Haiku 5.5 (mais rápido)']].map(([v,l])=>`<option value="${v}" ${S.ia.model===v?'selected':''}>${l}</option>`).join('')}</select>
-  <p class="hint">Crie a chave em console.anthropic.com. Ela fica salva só neste navegador e vai direto para a API da Anthropic. Cada análise custa centavos; pesquisas na web custam um pouco mais.</p>
+  <p class="hint">${modoServidor?'As solicitações ao Claude passam pelo servidor local.':'Crie a chave em console.anthropic.com. Ela fica salva neste navegador.'}</p>
   <div class="btns"><button class="pri" data-act="saveIA">Salvar</button></div></div>`}
   <div class="card"><h2>Backup</h2><p class="hint" style="margin-top:0">Os dados ficam só neste navegador. Exporte de vez em quando (a chave da API não vai no backup).</p>
   <div class="btns"><button data-act="export">Exportar backup</button><button data-act="import">Importar backup</button>
@@ -795,9 +875,19 @@ function vAjustes(){
 }
 
 /* ===================== Modal / foco ===================== */
-function modal(html){$('#modalBody').innerHTML=html;$('#modal').classList.add('on')}
-function fecharModal(){$('#modal').classList.remove('on')}
+let origemModal=null;
+function modal(html){
+  if(!$('#modal').classList.contains('on'))origemModal=document.activeElement;
+  $('#modalBody').innerHTML=html;$('#modal').classList.add('on');$('#modalBody').focus();
+}
+function fecharModal(){$('#modal').classList.remove('on');origemModal?.focus();origemModal=null}
 function toast(msg){modal(`<p style="margin-top:0">${esc(msg)}</p><div class="btns"><button class="pri" data-act="close">Ok</button></div>`)}
+function abrirMaterial(assuntoId){
+  const r=acharAssunto(assuntoId);
+  const materiais=r?materialDoAssunto(r):[];
+  if(!materiais.length)return;
+  modal(leitorMaterial(r,materiais)+'<div class="btns"><button data-act="close">Fechar leitura</button></div>');
+}
 function abrirLog(itemId,minPadrao){
   const it=missaoHoje().itens.find(i=>i.id===itemId),r=acharAssunto(it.assuntoId);
   modal(`<h2>Registrar: ${esc(r.a.nome)}</h2>
@@ -824,7 +914,11 @@ function iniciarFoco(itemId){
   focoItem=itemId;restante=it.min*60;decorrido=0;pausado=false;
   $('#focusTag').textContent=(it.tipo==='revisao'?'Revisão · ':'Estudo · ')+r.d.nome;
   $('#focusTitle').textContent=r.a.nome;$('#fPause').textContent='Pausar';
+  const materiais=materialDoAssunto(r),reader=$('#focusReader');
+  reader.hidden=!materiais.length;
+  reader.innerHTML=materiais.length?leitorMaterial(r,materiais,true):'';
   $('#focus').classList.add('on');tick();clearInterval(timer);timer=setInterval(tick,1000);
+  $('#focus').scrollTop=0;
 }
 function tick(){
   if(!pausado&&restante>0){restante--;decorrido++}
@@ -852,8 +946,15 @@ document.addEventListener('click',ev=>{
     close:fecharModal,
     log:()=>abrirLog(b.dataset.id),
     focus:()=>iniciarFoco(b.dataset.id),
+    material:()=>abrirMaterial(b.dataset.id),
     tecCopy:()=>tecCopy(b.dataset.id),
     replan:replanejar,
+    abrirResgate,
+    resgate:()=>{
+      const min=Number(b.dataset.min);
+      if(!TEMPOS_RESGATE.includes(min))return;
+      fecharModal();replanejar(min);
+    },
     hmais:()=>{const i=+b.dataset.i;S.rotina.horas[i]=Math.min(960,(+S.rotina.horas[i]||0)+30);refazerHoje();salvar();render()},
     hmenos:()=>{const i=+b.dataset.i;S.rotina.horas[i]=Math.max(0,(+S.rotina.horas[i]||0)-30);refazerHoje();salvar();render()},
     livre:abrirLivre,
@@ -892,7 +993,7 @@ document.addEventListener('click',ev=>{
         toast(`Gemini conectado. Modelo: ${S.ia.gmodel}. A IA já pode ser usada.`)}
       catch(err){b.disabled=false;b.textContent='Conectar';toast('Não consegui conectar: '+err.message)}
     },
-    saveIA:()=>{S.ia.key=$('#iaKey').value.trim();S.ia.model=$('#iaModel').value;salvar();toast('Configuração da IA salva.')},
+    saveIA:()=>{if(!modoServidor)S.ia.key=$('#iaKey').value.trim();S.ia.model=$('#iaModel').value;salvar();toast('Configuração da IA salva.')},
     iaEdital,iaProva,iaWeb,mentor,aplicarIA,
     descartarIA:()=>{iaRes=null;render()},
     limparChat:()=>{S.chat=[];salvar();render()},
@@ -902,7 +1003,10 @@ document.addEventListener('click',ev=>{
   };
   A[b.dataset.act]?.();
 });
-document.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.id==='mIn'&&!iaBusy)mentor()});
+document.addEventListener('keydown',ev=>{
+  if(ev.key==='Escape'&&$('#modal').classList.contains('on'))fecharModal();
+  if(ev.key==='Enter'&&ev.target.id==='mIn'&&!iaBusy)mentor();
+});
 $('#modal').onclick=ev=>{if(ev.target.id==='modal')fecharModal()};
 document.addEventListener('change',ev=>{
   const t=ev.target,e=E();

@@ -13,6 +13,8 @@ Você não decide o que estudar: o app monta a **missão do dia** com base no qu
 - **Rotina por hora**: defina a hora de começo e quantas horas estuda em cada dia; a missão sai com horários (ex.: 19:00–19:50).
 - **Agenda da semana**: os próximos 7 dias já planejados, hora a hora.
 - **Missão do dia** e **estudo livre** (registre o que estudou fora do plano).
+- **Modo resgate**: escolha 15, 30 ou 60 minutos para reorganizar os blocos pendentes.
+- **Materiais da PMPE Soldado**: leia na missão ou durante o foco. A aba **Materiais** reúne os PDFs originais e mostra a cobertura por disciplina.
 - **Onboarding** de 30 segundos no primeiro uso.
 - **Instalável no celular** (PWA) e funciona offline.
 - **Replanejamento automático**: se você falhar um dia, nada acumula. A fila se reorganiza.
@@ -48,6 +50,14 @@ A camada gratuita tem limite de pedidos por minuto e por dia, e o Google pode us
 Se quiser mais qualidade, dá para trocar para o **Claude (Anthropic)**, que é pago: crie a chave em https://console.anthropic.com. As chaves ficam só no seu navegador e não vão para o backup.
 
 > Este modo, com a chave no navegador, serve para **uso pessoal**. Para abrir o app para outras pessoas, a IA precisa passar por um backend que guarde a chave no servidor.
+
+### Biblioteca e servidor local
+
+Abra o `index.html` desta pasta para ler a biblioteca pessoal, ou execute `node server.cjs` com Node.js 22 ou superior e acesse **http://127.0.0.1:8787**. O servidor aceita conexões apenas na máquina local.
+
+Para usar o Claude pelo servidor, defina `ANTHROPIC_API_KEY` em um arquivo `.env` ao lado de `server.cjs`, execute `node --env-file=.env server.cjs` e selecione Claude em **Ajustes → IA**.
+
+Os PDFs e o catálogo de trechos ficam em `biblioteca-local/`, ignorada pelo Git. O backup do progresso não inclui essa pasta. Para mudar do GitHub Pages para a versão local, exporte o backup no endereço antigo e importe no novo.
 
 ## Integração com o TecConcursos
 

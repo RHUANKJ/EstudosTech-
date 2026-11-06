@@ -1,5 +1,5 @@
 // posse. — service worker: app offline (cache do próprio app; API e sites externos passam direto)
-const CACHE = 'posse-v4';
+const CACHE = 'posse-v5';
 const ARQS = ['./', 'index.html', 'editais.js', 'manifest.webmanifest', 'icon.svg'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQS))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
@@ -9,7 +9,11 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);
   if (e.request.method !== 'GET' || u.origin !== location.origin) return;
+  if (u.pathname.includes('/biblioteca-local/')) return;
   // rede primeiro (pega atualizações), cache se estiver offline
-  e.respondWith(fetch(e.request).then(r => { const c = r.clone(); caches.open(CACHE).then(x => x.put(e.request, c)); return r; })
-    .catch(() => caches.match(e.request).then(r => r || caches.match('index.html'))));
+  e.respondWith(fetch(e.request).then(r => {
+    if (r.ok) { const c = r.clone(); caches.open(CACHE).then(x => x.put(e.request, c)); }
+    return r;
+  }).catch(async () => (await caches.match(e.request)) ||
+    (e.request.mode === 'navigate' ? (await caches.match('index.html')) : null) || Response.error()));
 });
