@@ -21,7 +21,7 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 .mono,.stat b,.clock,td.num{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
-header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header.old{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .wrap{max-width:880px;margin:0 auto;padding:0 16px}
 .top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 8px;gap:10px}
 .logo{display:flex;align-items:center;gap:10px;min-width:0}
@@ -96,23 +96,88 @@ td.num,th.num{text-align:right}
 @keyframes s{to{transform:rotate(360deg)}}
 .res{font-size:13px}.res li{margin:3px 0}
 a{color:var(--accent)}
+/* ---------- Layout: menu lateral + painel ---------- */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;background:var(--card);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px}
+.side .logo{padding:0 8px}
+nav{display:flex;flex-direction:column;gap:2px;overflow:visible;padding:0}
+nav button{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;color:var(--muted);font-weight:500;text-align:left;width:100%}
+nav button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;pointer-events:none}
+nav button span{pointer-events:none}
+nav button:hover{background:var(--bg);color:var(--ink)}
+nav button.on{background:var(--soft);color:var(--accent)}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.cd-card{border-radius:14px;padding:14px;background:var(--grad);color:#fff}
+.cd-card b{font-family:"JetBrains Mono",monospace;font-size:28px;display:block;line-height:1.1}
+.cd-card small{opacity:.85;font-size:12px}
+.content{min-width:0}
+.topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 28px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.tb-l{display:flex;align-items:center;gap:10px;min-width:0}.tb-logo{display:none;flex:none}
+.tb-t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.content .wrap{max-width:1120px;padding:0 28px}
+.dash{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:center}
+.kpi .ic{width:38px;height:38px;border-radius:11px;background:var(--soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.kpi .ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.kpi b{display:block;font-family:"JetBrains Mono",monospace;font-size:19px;line-height:1.2}
+.kpi small{color:var(--muted);font-size:12px}
+.kpi .meta{font-size:11px;color:var(--muted)}
+.card-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}.card-h h2{margin:0}
+.ciclo{display:flex;flex-direction:column;gap:16px;align-items:center}.ciclo .leg{width:100%}
+.ciclo svg{flex:none}
+.leg{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;font-size:13px}
+.leg div{display:flex;align-items:center;gap:8px}.leg i{width:10px;height:10px;border-radius:3px;flex:none}
+.leg span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.leg em{font-style:normal;color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:12px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:130px;margin-top:6px}
+.week .col{display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.week .track{width:100%;max-width:30px;flex:1;background:var(--bg);border-radius:8px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.week .fill{width:100%;background:var(--grad);border-radius:8px}
+.week .goal{position:absolute;left:0;right:0;border-top:2px dashed var(--muted);opacity:.5}
+.week .lb{font-size:11px;color:var(--muted)}.week .lb.hj{color:var(--accent);font-weight:700}
+.heat{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:3px;justify-content:start}
+.heat i{width:12px;height:12px;border-radius:3px;background:var(--line)}
+.disc-row{margin:10px 0}.disc-row .top2{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;gap:8px}
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.dash{grid-template-columns:minmax(0,1fr)}}
+.dash>div{min-width:0}
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;top:auto;bottom:0;left:0;right:0;height:auto;flex-direction:row;padding:6px 6px calc(6px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line);z-index:15;gap:0}
+  .side .logo,.side-foot{display:none}
+  nav{flex-direction:row;width:100%;justify-content:space-around}
+  nav button{flex-direction:column;gap:3px;font-size:10.5px;padding:6px 2px;width:auto;flex:1 1 0;min-width:0;align-items:center}
+  nav button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  nav button.on{background:none}
+  .tb-logo{display:block}
+  .topbar{padding:12px 16px}
+  .content .wrap{padding:0 16px}
+  main{padding-bottom:110px}
+}
 </style>
 </head>
 <body>
-<header><div class="wrap">
-  <div class="top"><div class="logo">
+<div class="app">
+<aside class="side">
+  <div class="logo">
     <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true" style="flex:none"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#lg)"/><path d="M9 17l5 5 9-12" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <div style="min-width:0"><div class="brand">posse<span>.</span></div><div class="sub" id="hdr"></div></div></div>
-    <span class="pill" id="countdown"></span></div>
+    <div class="brand">posse<span>.</span></div></div>
   <nav id="nav">
-    <button data-tab="hoje" class="on">Hoje</button>
-    <button data-tab="editais">Editais</button>
-    <button data-tab="ia">IA</button>
-    <button data-tab="desempenho">Desempenho</button>
-    <button data-tab="ajustes">Ajustes</button>
+    <button data-tab="hoje" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Painel</span></button>
+    <button data-tab="editais"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span>Editais</span></button>
+    <button data-tab="ia"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg><span>IA</span></button>
+    <button data-tab="desempenho"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Desempenho</span></button>
+    <button data-tab="ajustes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Ajustes</span></button>
   </nav>
-</div></header>
-<main class="wrap" id="main"></main>
+  <div class="side-foot" id="sideFoot"></div>
+</aside>
+<div class="content">
+  <div class="topbar"><div class="tb-l">
+    <svg class="tb-logo" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#lg2)"/><path d="M9 17l5 5 9-12" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div style="min-width:0"><div class="tb-t" id="hdr"></div><div class="sub" id="hdrSub"></div></div></div>
+    <span class="pill" id="countdown"></span></div>
+  <main class="wrap" id="main"></main>
+</div>
+</div>
 
 <div class="modal" id="modal"><div class="card" id="modalBody"></div></div>
 <div class="focus" id="focus">
@@ -377,9 +442,12 @@ let tab='hoje';
 const $=s=>document.querySelector(s);
 function render(){
   const e=E();
-  $('#hdr').textContent=e?[e.nome,e.cargo,e.banca].filter(Boolean).join(' · '):'do edital à posse';
-  const cd=$('#countdown');
-  if(e?.dataProva){const n=diasEntre(hoje(),e.dataProva);cd.textContent=n>=0?`${n} dias`:'prova feita';cd.style.display=''}else cd.style.display='none';
+  $('#hdr').textContent=e?[e.nome,e.cargo].filter(Boolean).join(' · '):'posse';
+  $('#hdrSub').textContent=e?(e.banca||''):'do edital à posse';
+  const cd=$('#countdown');const n=e?.dataProva?diasEntre(hoje(),e.dataProva):null;
+  if(n!=null){cd.textContent=n>=0?`${n} dias`:'prova feita';cd.style.display=''}else cd.style.display='none';
+  $('#sideFoot').innerHTML=(S.editais.length>1?`<label style="margin:0 4px">Estudando</label><select id="edSel">${S.editais.map(x=>`<option value="${x.id}" ${x.id===S.ativo?'selected':''}>${esc(x.nome+' · '+x.cargo)}</option>`).join('')}</select>`:'')+
+    (n!=null&&n>=0?`<div class="cd-card"><small>Faltam</small><b>${n} dias</b><small>prova em ${e.dataProva.split('-').reverse().join('/')}</small></div>`:'');
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
   $('#main').innerHTML=(!e&&!['editais','ajustes','ia'].includes(tab))?vSemEdital():{hoje:vHoje,editais:vEditais,ia:vIA,desempenho:vDesempenho,ajustes:vAjustes}[tab]();
   if(tab==='ia'){const c=$('.chat');if(c)c.scrollTop=c.scrollHeight}
@@ -390,37 +458,83 @@ function vSemEdital(){
   <div class="btns"><button class="pri" data-tab-go="editais">Adicionar edital</button></div></div>`;
 }
 function saudacao(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
+const CORES=['#6366f1','#06b6d4','#a855f7','#10b981','#f59e0b','#f43f5e','#0ea5e9','#84cc16','#ec4899','#14b8a6','#eab308','#8b5cf6'];
+const ICO={
+  fogo:'<svg viewBox="0 0 24 24"><path d="M12 22c4 0 7-3 7-7 0-4-3-6-4-9-1 2-2 3-4 3 0-2 0-4-1-6-3 3-5 7-5 12 0 4 3 7 7 7z"/></svg>',
+  rel:'<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg>',
+  q:'<svg viewBox="0 0 24 24"><path d="M4 4h16v12H8l-4 4z"/><path d="M9 9h6M9 12h4"/></svg>',
+  alvo:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>'
+};
+function metaSemana(){return S.rotina.horas.reduce((t,h)=>t+(+h||0),0)}
+function minEm(d,ids){return S.sessoes.filter(s=>s.data===d&&(!ids||ids.has(s.assuntoId))).reduce((t,s)=>t+s.min,0)}
+function donut(parts,size=132,th=16){
+  const tot=parts.reduce((t,p)=>t+p.v,0)||1,r=(size-th)/2,c=2*Math.PI*r;let off=0;
+  const segs=parts.map(p=>{const len=p.v/tot*c;const s=`<circle r="${r}" cx="${size/2}" cy="${size/2}" fill="none" stroke="${p.cor}" stroke-width="${th}" stroke-dasharray="${Math.max(0,len-2)} ${c}" stroke-dashoffset="${-off}" transform="rotate(-90 ${size/2} ${size/2})"/>`;off+=len;return s}).join('');
+  return segs;
+}
 function vHoje(){
-  const e=E(),m=missaoHoje();
+  const e=E(),m=missaoHoje(),h0=hoje();
+  const ids=new Set(assuntosDe(e).map(a=>a.id));
   const feitos=m.itens.filter(i=>i.feito).length,tot=m.itens.length;
-  const sesH=S.sessoes.filter(s=>s.data===hoje());
-  const minHoje=sesH.reduce((t,s)=>t+s.min,0),qs=sesH.reduce((t,s)=>t+s.q,0);
+  const sesH=S.sessoes.filter(s=>s.data===h0);
+  const qs=sesH.reduce((t,s)=>t+s.q,0);
+  const sem=minutosDesde(7),meta=metaSemana();
+  const ses7=S.sessoes.filter(s=>s.data>addDias(h0,-7)&&ids.has(s.assuntoId));
+  const q7=ses7.reduce((t,s)=>t+s.q,0),a7=ses7.reduce((t,s)=>t+s.ac,0);
   const pend=pendenciaOntem();
-  let h=`<div class="hero"><h1>${saudacao()}.</h1><p>${tot?(feitos===tot?'Missão cumprida. Amanhã tem mais.':`Hoje são ${tot} ${tot>1?'passos':'passo'}. Comece pelo primeiro.`):'Dia livre no plano.'}</p></div>`;
+  let h=`<div class="hero"><h1>${saudacao()}.</h1><p>${tot?(feitos===tot?'Missão cumprida. Amanhã tem mais.':`Hoje são ${tot} ${tot>1?'passos':'passo'}. Comece pelo primeiro.`):'Dia livre no plano. Descanso também é estratégia.'}</p></div>`;
   if(e.nota&&!assuntosDe(e).some(a=>a.incid||a.relev!=null))h+=`<div class="info">${esc(e.nota)} <a href="#" data-tab-go="ia">Usar a IA →</a></div>`;
   if(pend)h+=`<div class="notice">Ontem ficaram ${pend} ${pend>1?'itens':'item'} sem fazer. Tudo bem: já reorganizei pela prioridade, sem acumular.</div>`;
-  h+=`<div class="stats">
-    <div class="stat"><small>Sequência</small><b>${streak()}d</b></div>
-    <div class="stat"><small>Hoje</small><b>${fmtH(minHoje)}</b></div>
-    <div class="stat"><small>Questões hoje</small><b>${qs}</b></div>
-    <div class="stat"><small>7 dias</small><b>${fmtH(minutosDesde(7))}</b></div></div>
-  <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-    <h2 style="margin:0">Missão de hoje</h2><span class="sub mono">${feitos}/${tot}</span></div>
+  h+=`<div class="kpis">
+    <div class="kpi"><div class="ic">${ICO.fogo}</div><div><small>Sequência</small><b>${streak()} ${streak()===1?'dia':'dias'}</b></div></div>
+    <div class="kpi"><div class="ic">${ICO.rel}</div><div><small>Semana</small><b>${fmtH(sem)}</b><div class="meta">meta ${fmtH(meta)}</div></div></div>
+    <div class="kpi"><div class="ic">${ICO.q}</div><div><small>Questões hoje</small><b>${qs}</b><div class="meta">${q7} na semana</div></div></div>
+    <div class="kpi"><div class="ic">${ICO.alvo}</div><div><small>Acerto 7 dias</small><b>${q7?Math.round(a7/q7*100)+'%':'–'}</b></div></div></div>`;
+  // ---- coluna esquerda: missão
+  let L=`<div class="card"><div class="card-h"><h2>Missão de hoje</h2><span class="sub mono">${feitos}/${tot}</span></div>
     <div class="bar prog"><i style="width:${tot?feitos/tot*100:0}%"></i></div>`;
-  if(!tot)h+=`<div class="empty">Sem tempo de estudo configurado para hoje. Descanso também é plano.<br><button style="margin-top:8px" data-tab-go="ajustes">Ajustar rotina</button></div>`;
+  if(!tot)L+=`<div class="empty">Sem tempo de estudo configurado para hoje.<br><button style="margin-top:8px" data-tab-go="ajustes">Ajustar rotina</button></div>`;
   for(const it of m.itens){
     const r=acharAssunto(it.assuntoId);if(!r)continue;const rev=it.tipo==='revisao';
-    h+=`<div class="item ${it.feito?'done':''}">
+    L+=`<div class="item ${it.feito?'done':''}">
       <button class="check" title="Registrar" data-act="log" data-id="${it.id}" ${it.feito?'disabled':''}></button>
       <div class="body">
         <div><span class="tag ${rev?'rev':''}">${rev?'Revisão':'Estudo'}</span><span class="small">${esc(r.d.nome)}</span></div>
         <div class="t">${esc(r.a.nome)}</div>
         <div class="d">${it.min} min · ${rev?`${it.qtd} questões de revisão`:`teoria + ${it.qtd} questões`}${it.motivo?` · <i>${esc(it.motivo)}</i>`:''}</div>
         ${r.a.temas?.length?`<div class="temas"><b>Mais cobrado:</b> ${r.a.temas.map(esc).join(' · ')}</div>`:''}
-        ${it.feito?'':`<div class="btns"><button class="pri" data-act="focus" data-id="${it.id}">Começar foco</button>${tecBotao(r.a)}</div>`}
+        ${it.feito?'':`<div class="btns"><button class="pri" data-act="focus" data-id="${it.id}">▶ Começar foco</button>${tecBotao(r.a)}</div>`}
       </div></div>`;
   }
-  return h+`<div class="btns" style="margin-top:12px"><button class="ghost" data-act="replan">↻ Replanejar o resto do dia</button></div></div>`;
+  L+=`<div class="btns" style="margin-top:12px"><button class="ghost" data-act="replan">↻ Replanejar o resto do dia</button></div></div>`;
+  // ---- semana (barras)
+  const dn=['D','S','T','Q','Q','S','S'];
+  const dias=[...Array(7)].map((_,i)=>addDias(h0,i-6));
+  const vals=dias.map(d=>({d,min:minEm(d),goal:+S.rotina.horas[new Date(d+'T12:00:00').getDay()]||0}));
+  const mx=Math.max(30,...vals.map(v=>Math.max(v.min,v.goal)));
+  L+=`<div class="card"><div class="card-h"><h2>Últimos 7 dias</h2><span class="sub">tracejado = meta</span></div><div class="week">`+
+    vals.map(v=>`<div class="col" title="${v.d.split('-').reverse().join('/')}: ${fmtH(v.min)} de ${fmtH(v.goal)}"><div class="track">${v.goal?`<div class="goal" style="bottom:${v.goal/mx*100}%"></div>`:''}<div class="fill" style="height:${v.min/mx*100}%"></div></div><span class="lb ${v.d===h0?'hj':''}">${dn[new Date(v.d+'T12:00:00').getDay()]}</span></div>`).join('')+`</div></div>`;
+  // ---- coluna direita: ciclo de estudos
+  const pesoTot=e.disciplinas.reduce((t,d)=>t+(+d.peso||0),0)||1;
+  const lim7=addDias(h0,-6);
+  const feito7={};S.sessoes.filter(s=>s.data>=lim7).forEach(s=>{const r=acharAssunto(s.assuntoId);if(r&&r.e===e)feito7[r.d.id]=(feito7[r.d.id]||0)+s.min});
+  const parts=e.disciplinas.map((d,i)=>({d,cor:CORES[i%CORES.length],v:+d.peso||0,meta:Math.round(meta*(+d.peso||0)/pesoTot),feito:feito7[d.id]||0}));
+  const sz=132;
+  let R=`<div class="card"><div class="card-h"><h2>Ciclo de estudos</h2><span class="sub">semana</span></div><div class="ciclo">
+    <svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}">${donut(parts,sz)}
+      <text x="50%" y="47%" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="18" font-weight="700" fill="currentColor">${meta?Math.min(100,Math.round(sem/meta*100)):0}%</text>
+      <text x="50%" y="62%" text-anchor="middle" font-size="10" fill="var(--muted)">da meta</text></svg>
+    <div class="leg">${parts.map(p=>`<div title="${esc(p.d.nome)}"><i style="background:${p.cor}"></i><span>${esc(p.d.nome)}</span><em>${fmtH(p.feito)}/${fmtH(p.meta)}</em></div>`).join('')}</div></div></div>`;
+  // ---- próximas revisões
+  const vistos=new Set();const revs=S.revisoes.filter(r=>!r.feita&&ids.has(r.assuntoId)&&r.due>h0).sort((a,b)=>a.due.localeCompare(b.due)).filter(r=>!vistos.has(r.assuntoId)&&vistos.add(r.assuntoId)).slice(0,5);
+  R+=`<div class="card"><div class="card-h"><h2>Próximas revisões</h2></div>`+
+    (revs.length?revs.map(r=>{const x=acharAssunto(r.assuntoId);const n=diasEntre(h0,r.due);return`<div class="disc-row"><div class="top2"><span>${esc(x.a.nome)}</span><span class="sub mono">${n===1?'amanhã':'em '+n+'d'}</span></div></div>`}).join('')
+    :`<p class="hint" style="margin:0">Aparecem aqui depois que você conclui um bloco de estudo.</p>`)+`</div>`;
+  // ---- constância (12 semanas)
+  const start=addDias(h0,-83-new Date(h0+'T12:00:00').getDay()+6);
+  let cells='';for(let i=0;i<84;i++){const d=addDias(start,i);if(d>h0){cells+='<i style="opacity:0"></i>';continue}const mm=minEm(d);const o=mm?Math.min(1,.25+mm/120):0;cells+=`<i title="${d.split('-').reverse().join('/')}: ${fmtH(mm)}" style="${o?`background:var(--accent);opacity:${o.toFixed(2)}`:''}"></i>`}
+  R+=`<div class="card"><div class="card-h"><h2>Constância</h2><span class="sub">12 semanas</span></div><div class="heat">${cells}</div></div>`;
+  return h+`<div class="dash"><div>${L}</div><div>${R}</div></div>`;
 }
 
 function vEditais(){
@@ -641,6 +755,7 @@ $('#modal').onclick=ev=>{if(ev.target.id==='modal')fecharModal()};
 document.addEventListener('change',ev=>{
   const t=ev.target,e=E();
   if(t.id==='fileIn'&&t.files[0]){t.files[0].text().then(x=>{try{const o=JSON.parse(x);if(o.v!==2||!o.editais)throw 0;o.ia={...o.ia,key:S.ia.key};S=o;salvar();render();toast('Backup importado.')}catch(_){toast('Arquivo inválido.')}});return}
+  if(t.id==='edSel'){S.ativo=t.value;salvar();render();return}
   if(t.dataset.r){S.rotina[t.dataset.r]=+t.value||0;salvar();return}
   if(t.dataset.h!==undefined){S.rotina.horas[+t.dataset.h]=Math.max(0,+t.value||0);salvar();return}
   if(t.dataset.ef&&e){e[t.dataset.ef]=t.value;salvar();render();return}

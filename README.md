@@ -9,6 +9,7 @@ Você não decide o que estudar: o app monta a **missão do dia** com base no qu
   - **PMPE – Soldado** (Edital 001/2026, Instituto AOCP, prova em 21/02/2027), com incidência real contada na prova de Soldado 2024;
   - **PMPE – 2º Tenente QOPM (CFO)** (mesmo edital);
   - **PCPE – Agente/Escrivão** (estrutura do edital anterior, Cebraspe; atualizar com o edital 2026).
+- **Painel** com indicadores, ciclo de estudos (meta por disciplina), gráfico da semana, próximas revisões e mapa de constância.
 - **Missão do dia**: blocos de estudo e revisões que cabem no tempo que você tem em cada dia da semana.
 - **Replanejamento automático**: se você falhar um dia, nada acumula. A fila se reorganiza.
 - **Modo foco** com cronômetro, **sequência de dias**, **revisão espaçada** (1, 7 e 30 dias) e **desempenho por assunto**.
